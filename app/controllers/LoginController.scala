@@ -6,20 +6,20 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.db.Database
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+import play.api.i18n.{MessagesApi, I18nSupport}
+
 import models._
 
 /**
   * Handles logging in and creating accounts
   */
-class LoginController @Inject()(db: Database) extends Controller {
+class LoginController @Inject()(val messagesApi: MessagesApi,
+                                db: Database) extends Controller with I18nSupport {
 
   val userForm = Form(
     mapping(
       "username" -> nonEmptyText,
-      "password" -> nonEmptyText,
-      "email" -> nonEmptyText
+      "password" -> nonEmptyText
     )(UserData.apply)(UserData.unapply)
   )
 
@@ -31,11 +31,11 @@ class LoginController @Inject()(db: Database) extends Controller {
     val userLogin : UserData = userForm.bindFromRequest.get
     val username : String = userLogin.getUsername()
     val password : String = userLogin.getPassword()
-    val email : String = userLogin.getEmail()
     val savedPassword: String = DBUtility.getPasswordFromUsername(db, username)
     if (savedPassword == null || savedPassword != password) {
       BadRequest("incorrect username or password")
+    } else {
+      Ok("welcome " + username)
     }
-    Ok("welcome " + username)
   }
 }
