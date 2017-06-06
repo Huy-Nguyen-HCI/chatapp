@@ -1,18 +1,19 @@
 package controllers
 
+import javax.inject.Inject
+
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-
+import play.api.db.Database
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-
 import models._
 
 /**
   * Handles logging in and creating accounts
   */
-class LoginController extends Controller {
+class LoginController @Inject()(db: Database) extends Controller {
 
   val userForm = Form(
     mapping(
@@ -31,9 +32,10 @@ class LoginController extends Controller {
     val username : String = userLogin.getUsername()
     val password : String = userLogin.getPassword()
     val email : String = userLogin.getEmail()
-    println("username: " + username)
-    println("password: " + password)
-    println("emaiL: " + email)
-    Ok("hello")
+    val savedPassword: String = DBUtility.getPasswordFromUsername(db, username)
+    if (savedPassword == null || savedPassword != password) {
+      BadRequest("incorrect username or password")
+    }
+    Ok("welcome " + username)
   }
 }
