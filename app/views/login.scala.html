@@ -1,3 +1,5 @@
+@import helper._
+@(myForm: Form[UserData])(implicit request: RequestHeader, messages: Messages)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,17 +7,12 @@
     <title>Login page</title>
 </head>
 <body>
-    <form action="@routes.LoginController.login()" method="post">
-        <label for="username">Username</label>
-        <input id="username" name="username" placeholder="Username" type="text">
-        <br>
-        <label for="password">Password</label>
-        <input id="password" name="password" placeholder="Password" type="password">
-        <br>
-        <label for="email">Email</label>
-        <input id="email" name="email" placeholder="email" type="text">
-        <br>
-        <input id="submitButton" type="submit">
-    </form>
+    @form(action = routes.LoginController.login()) {
+        @CSRF.formField
+        @inputText(myForm("username"))
+        @inputPassword(myForm("password"))
+        @inputText(myForm("email"))
+        <input type="submit">
+    }
 </body>
 </html>

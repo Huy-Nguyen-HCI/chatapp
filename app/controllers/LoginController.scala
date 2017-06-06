@@ -1,12 +1,11 @@
 package controllers
 
-import javax.inject._
-import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 
-import play.filters.csrf._
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 
 import models._
 
@@ -23,8 +22,8 @@ class LoginController extends Controller {
     )(UserData.apply)(UserData.unapply)
   )
 
-  def index = Action {
-    Ok(views.html.login())
+  def index = Action { implicit request =>
+    Ok(views.html.login(userForm))
   }
 
   def login = Action { implicit request =>
