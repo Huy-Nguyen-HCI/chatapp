@@ -1,13 +1,13 @@
 # --- !Ups
-CREATE TABLE users(
-  'username' VARCHAR,
-  'email' VARCHAR,
-  'password' VARCHAR
+CREATE TABLE user (
+  'username' VARCHAR NOT NULL PRIMARY KEY,
+  'password' VARCHAR NOT NULL,
+  'email' VARCHAR
 );
 
-CREATE UNIQUE INDEX account_index ON users('username', 'email');
+CREATE UNIQUE INDEX account_index ON user('username', 'email');
 
-INSERT INTO users('username', 'email', 'password') VALUES('pucca', 'axx.bx.c@gmail.com', 'pucca');
+INSERT INTO user('username', 'password', 'email') VALUES('pucca', 'pucca', 'axx.bx.c@gmail.com');
 
 # --- !Downs
-DROP TABLE users;
+DROP TABLE user IF EXISTS;

@@ -9,13 +9,15 @@ scalaVersion := "2.11.11"
 
 
 libraryDependencies ++= Seq(
-  jdbc,
   filters,
-  evolutions,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % Test,
-  "org.xerial" % "sqlite-jdbc" % "3.8.6"
+  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % Test
 )
 
+libraryDependencies ++= Seq(
+  "org.xerial" % "sqlite-jdbc" % "3.8.6",
+  "com.typesafe.play" %% "play-slick" % "2.0.0",
+  "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0"
+)
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "pt-lmt.controllers._"

@@ -1,6 +1,5 @@
 @import helper._
-@import models.UserLoginData
-@(myForm: Form[UserLoginData])(implicit request: RequestHeader, messages: Messages)
+@(myForm: Form[UserSignupData])(implicit request: RequestHeader, messages: Messages)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +7,11 @@
     <title>Login page</title>
 </head>
 <body>
-    @form(action = routes.LoginController.login()) {
+    @form(action = routes.SignupController.signup()) {
         @CSRF.formField
         @inputText(myForm("username"))
         @inputPassword(myForm("password"))
+        @inputText(myForm("email"))
         <input type="submit">
     }
 </body>
