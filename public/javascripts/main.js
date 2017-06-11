@@ -1,22 +1,17 @@
 function init(webSocketURL) {
-  var $messages = $("#messages"),
-      $send = $("#send"),
-      $message = $("#message"),
-      connection = new WebSocket(webSocketURL);
 
-  $send.prop("disabled", true);
+  var connection = new WebSocket(webSocketURL),
+      inputBox = $('#input-box'),
+      messages = $('#message-area');
 
   var send = function () {
-      var text = $message.val();
-      $message.val("");
+      var text = inputBox.val();
+      inputBox.val("");
       connection.send(text);
   };
 
   connection.onopen = function () {
-      $send.prop("disabled", false);
-      $messages.prepend($("<li class='bg-info' style='font-size: 1.5em'>Connected</li>"));
-      $send.on('click', send);
-      $message.keypress(function(event){
+      $('.write').keypress(function(event){
           var keycode = (event.keyCode ? event.keyCode : event.which);
           if(keycode == '13'){
               send();
@@ -27,6 +22,24 @@ function init(webSocketURL) {
       console.log('WebSocket Error ', error);
   };
   connection.onmessage = function (event) {
-      $messages.append($("<li style='font-size: 1.5em'>" + event.data + "</li>"))
+      messages.append($(`<div class='bubble you'>${event.data}</div>`))
   }
 }
+
+
+$('.chat[data-chat=person2]').addClass('active-chat');
+$('.person[data-chat=person2]').addClass('active');
+
+$('.left .person').mousedown(function(){
+    if ($(this).hasClass('.active')) {
+        return false;
+    } else {
+        var findChat = $(this).attr('data-chat');
+        var personName = $(this).find('.name').text();
+        $('.right .top .name').html(personName);
+        $('.chat').removeClass('active-chat');
+        $('.left .person').removeClass('active');
+        $(this).addClass('active');
+        $('.chat[data-chat = '+findChat+']').addClass('active-chat');
+    }
+});
