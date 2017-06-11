@@ -43,12 +43,18 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
         // check if login password matches user password
         val query = userDao.findByUsername(username)
         query map {
-          case Some(user) if user.password == password => Ok("welcome " + username)
+          case Some(user) if user.password == password =>
+            Redirect("/").withSession("connected" -> username)
+
           case _ => BadRequest("incorrect username and password")
         }
       }
     )
 
+  }
+
+  def logout = Action { implicit request =>
+    Redirect("/").withNewSession
   }
 }
 

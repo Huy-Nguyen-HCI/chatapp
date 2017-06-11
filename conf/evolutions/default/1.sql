@@ -5,9 +5,9 @@ CREATE TABLE user (
   'email' VARCHAR
 );
 
-CREATE UNIQUE INDEX account_index ON user('username', 'email');
+CREATE UNIQUE INDEX account_index ON user('email');
 
 INSERT INTO user('username', 'password', 'email') VALUES('pucca', 'pucca', 'axx.bx.c@gmail.com');
 
 # --- !Downs
-DROP TABLE user IF EXISTS;
+DROP TABLE user;

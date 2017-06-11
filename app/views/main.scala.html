@@ -1,4 +1,4 @@
-@(title: String, scripts: Html = Html(""))(content: Html)
+@(title: String, scripts: Html = Html(""))(content: Html)(implicit session: Session)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,9 +14,19 @@
         @* And here's where we render the `Html` object containing
          * the page content. *@
 
-        <section id="main">
-        @content
-        </section>
+        <div class="container">
+            <div class="pull-right">
+            @session.get("connected").map { user =>
+                <span>@user</span> | <a href="/logout">logout</a>
+            }.getOrElse {
+                <a href="/login">login</a> | <a href="/signup">sign up</a>
+            }
+            </div>
+
+            <section>
+                @content
+            </section>
+        </div>
 
         <script src="@routes.Assets.versioned("lib/jquery/dist/jquery.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
