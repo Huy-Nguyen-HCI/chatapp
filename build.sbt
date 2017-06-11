@@ -13,10 +13,17 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % Test
 )
 
+// Slick database
 libraryDependencies ++= Seq(
   "org.xerial" % "sqlite-jdbc" % "3.8.6",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0"
+)
+
+// front-end libraries
+libraryDependencies ++= Seq(
+  "org.webjars.npm" % "jquery" % "3.2.1",
+  "org.webjars.bower" % "bootstrap" % "3.3.7"
 )
 
 // Adds additional packages into Twirl

@@ -1,18 +1,19 @@
-@import helper._
-@import models.UserLoginData
 @(myForm: Form[UserLoginData])(implicit request: RequestHeader, messages: Messages)
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login page</title>
-</head>
-<body>
+
+@import helper._
+@import views.html.bootstrap
+
+@implicitFieldConstructor = @{ FieldConstructor(bootstrap.input.f) }
+
+@main("Login page") {
+    <h1>Login</h1>
+
+    <hr>
+
     @form(action = routes.LoginController.login()) {
         @CSRF.formField
-        @inputText(myForm("username"))
-        @inputPassword(myForm("password"))
+        @inputText(myForm("username"), '_label -> "Username", 'class -> "form-control")
+        @inputPassword(myForm("password"), '_label -> "Password", 'class -> "form-control")
         <input type="submit">
     }
-</body>
-</html>
+}

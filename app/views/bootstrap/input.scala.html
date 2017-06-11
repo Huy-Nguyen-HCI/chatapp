@@ -1,0 +1,11 @@
+@(elements: helper.FieldElements)
+<div class="form-group @elements.args.get('_class) @if(elements.hasErrors) { has-error }">
+    <label for="@elements.id">@elements.label</label>
+    @elements.input
+    @if(elements.infos.contains("Required")) {
+    <small><span class="help-inline">@elements.infos.mkString(", ")</span></small>
+    }
+    @if(elements.hasErrors) {
+    <div class="error">@elements.errors</div>
+    }
+</div>

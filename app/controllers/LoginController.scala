@@ -7,10 +7,10 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 
-import models._
 import dao.UserDao
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+
 
 /**
   * Handles logging in and creating accounts
@@ -31,15 +31,26 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
   }
 
   def login = Action.async { implicit request =>
-    val userLogin : UserLoginData = userForm.bindFromRequest.get
-    val username : String = userLogin.username
-    val password : String = userLogin.password
+    userForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Ok(views.html.login(errorForm)))
+      },
 
-    // check if login password matches user password
-    val query = userDao.findByUsername(username)
-    query map {
-      case Some(user) if user.password == password => Ok("welcome " + username)
-      case _ => BadRequest("incorrect username and password")
-    }
+      userLogin => {
+        val username : String = userLogin.username
+        val password : String = userLogin.password
+
+        // check if login password matches user password
+        val query = userDao.findByUsername(username)
+        query map {
+          case Some(user) if user.password == password => Ok("welcome " + username)
+          case _ => BadRequest("incorrect username and password")
+        }
+      }
+    )
+
   }
 }
+
+// user login form
+case class UserLoginData(username: String, password: String)

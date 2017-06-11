@@ -7,7 +7,7 @@ import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Controller
 import play.api.data.Forms._
-import models._
+import models.User
 import dao.UserDao
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -23,6 +23,7 @@ class SignupController @Inject() (val messagesApi: MessagesApi, userDao: UserDao
     mapping(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText,
+      "retypePassword" -> nonEmptyText,
       "email" -> email
     )(UserSignupData.apply)(UserSignupData.unapply)
   )
@@ -32,18 +33,31 @@ class SignupController @Inject() (val messagesApi: MessagesApi, userDao: UserDao
   }
 
   def signup = Action.async { implicit request =>
-    val userInfo: UserSignupData = userForm.bindFromRequest.get
-    val username = userInfo.username
-    val password = userInfo.password
-    val email = userInfo.email
+    userForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Ok(views.html.signup(errorForm)))
+      },
 
-    // check if user already exists before adding new user
-    userDao.findByUsername(username).flatMap {
-      case Some(_) => Future.successful(Ok("username already exists"))
-      case _ => {
-        val newUser = User(username, password, email)
-        userDao.insert(newUser).map(_ => Ok("sign up successfully"))
+      userInfo => {
+        val userInfo: UserSignupData = userForm.bindFromRequest.get
+        val username = userInfo.username
+        val password = userInfo.password
+        val email = userInfo.email
+
+        // check if user already exists before adding new user
+        userDao.findByUsername(username).flatMap {
+          case Some(_) =>
+            val errorForm = userForm.withError("username", "this username already exists")
+            Future.successful(Ok(views.html.signup(errorForm)))
+          case _ =>
+            val newUser = User(username, password, email)
+            userDao.insert(newUser).map(_ => Ok("sign up successfully"))
+        }
       }
-    }
+    )
   }
 }
+
+// user sign up form
+case class UserSignupData(username: String, password: String,
+                          retypePassword: String, email: String)

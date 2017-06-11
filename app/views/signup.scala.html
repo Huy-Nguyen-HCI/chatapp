@@ -1,18 +1,33 @@
-@import helper._
 @(myForm: Form[UserSignupData])(implicit request: RequestHeader, messages: Messages)
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login page</title>
-</head>
-<body>
-    @form(action = routes.SignupController.signup()) {
+
+@import helper._
+@import views.html.bootstrap
+
+@implicitFieldConstructor = @{ FieldConstructor(bootstrap.input.f) }
+
+
+@scripts = {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"
+            type="text/javascript"></script>
+}
+
+
+@main("Sign up page", scripts) {
+
+    <h1>Sign up</h1>
+
+    <hr>
+
+    @form(action = routes.SignupController.signup(), Symbol("data-toggle") -> "validator") {
         @CSRF.formField
-        @inputText(myForm("username"))
-        @inputPassword(myForm("password"))
-        @inputText(myForm("email"))
+
+        @inputText(myForm("username"), '_label -> "Username", 'class -> "form-control")
+        @inputPassword(myForm("password"), '_label -> "Password", 'class -> "form-control")
+        @input(myForm("retypePassword"), '_label -> "Re-type password", '_class -> "has-feedback") { (id, name, value, args) =>
+        <input type="password" class="form-control" id="@id" name="@name" data-match="#password" required>
+        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+        }
+        @inputText(myForm("email"), '_label -> "Email", 'class -> "form-control")
         <input type="submit">
     }
-</body>
-</html>
+}
