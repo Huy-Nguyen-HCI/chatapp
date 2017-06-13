@@ -11,6 +11,8 @@ import dao.UserDao
 
 import scala.concurrent.{ExecutionContext, Future}
 
+import com.github.t3hnar.bcrypt._
+
 
 /**
   * Handles logging in and creating accounts
@@ -43,10 +45,12 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
         // check if login password matches user password
         val query = userDao.findByUsername(username)
         query map {
-          case Some(user) if user.password == password =>
+          case Some(user) if password.isBcrypted(user.password) =>
             Redirect("/").withSession("connected" -> username)
 
-          case _ => BadRequest("incorrect username and password")
+          case _ =>
+            val formWithErrors = userForm.withGlobalError("incorrect username or password")
+            Ok(views.html.login(formWithErrors))
         }
       }
     )

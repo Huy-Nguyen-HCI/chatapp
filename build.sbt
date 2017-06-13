@@ -14,7 +14,8 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % Test,
   "com.typesafe.akka" %% "akka-http-core" % akkaVersion,
   "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
-  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
+  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+  "com.github.t3hnar" %% "scala-bcrypt" % "3.0"
 )
 
 // Slick database

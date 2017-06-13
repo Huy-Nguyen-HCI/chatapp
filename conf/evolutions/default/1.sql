@@ -7,7 +7,5 @@ CREATE TABLE user (
 
 CREATE UNIQUE INDEX account_index ON user('email');
 
-INSERT INTO user('username', 'password', 'email') VALUES('pucca', 'pucca', 'axx.bx.c@gmail.com');
-
 # --- !Downs
 DROP TABLE user;

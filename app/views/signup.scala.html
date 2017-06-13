@@ -21,6 +21,14 @@
     @form(action = routes.SignupController.signup(), Symbol("data-toggle") -> "validator") {
         @CSRF.formField
 
+        @if(myForm.hasGlobalErrors) {
+            <ul>
+            @for(error <- myForm.globalErrors) {
+                <li>@Messages(error.messages, error.args)</li>
+            }
+            </ul>
+        }
+
         @inputText(myForm("username"), '_label -> "Username", 'class -> "form-control")
         @inputPassword(myForm("password"), '_label -> "Password", 'class -> "form-control")
         @input(myForm("retypePassword"), '_label -> "Re-type password", '_class -> "has-feedback") { (id, name, value, args) =>

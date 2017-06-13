@@ -1,5 +1,6 @@
 package dao
 
+import java.sql.SQLException
 import javax.inject.{Inject, Singleton}
 
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -7,6 +8,7 @@ import slick.driver.JdbcProfile
 import models.User
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 /**
   * Created by thangle on 6/6/17.
@@ -21,6 +23,9 @@ class UserDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
 
   def findByUsername(username: String): Future[Option[User]] =
     db.run(Users.filter(_.username === username).result.headOption)
+
+  def findByEmail(email: String): Future[Option[User]] =
+    db.run(Users.filter(_.email === email).result.headOption)
 
   def insert(user: User): Future[Unit] = db.run(Users += user).map(_ => ())
 
