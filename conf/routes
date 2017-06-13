@@ -8,6 +8,7 @@ GET     /                           controllers.HomeController.index
 
 GET     /login                      controllers.LoginController.index
 POST    /login                      controllers.LoginController.login
+GET     /logout                     controllers.LoginController.logout
 
 GET     /signup                     controllers.SignupController.index
 POST    /signup                     controllers.SignupController.signup
