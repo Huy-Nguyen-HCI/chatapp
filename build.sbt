@@ -31,6 +31,8 @@ libraryDependencies ++= Seq(
   "org.webjars" % "flot" % "0.8.3"
 )
 
+herokuAppName in Compile := "morning-headland-89121"
+
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "pt-lmt.controllers._"
 
