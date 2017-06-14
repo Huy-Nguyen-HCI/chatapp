@@ -57,7 +57,7 @@ class SignupController @Inject() (val messagesApi: MessagesApi, userDao: UserDao
             val errorForm = createErrorForm(userInfo, "email", "this email already exists")
             Future.successful(Ok(views.html.signup(errorForm)))
           case (None, None) =>
-            val newUser = User(username, password.bcrypt, email)
+            val newUser = User(None, username, password.bcrypt, email)
             userDao.insert(newUser).map(_ => Redirect("/"))
         }
 

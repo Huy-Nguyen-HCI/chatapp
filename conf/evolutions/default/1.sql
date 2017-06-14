@@ -1,11 +1,10 @@
 # --- !Ups
 CREATE TABLE user (
-  'username' VARCHAR NOT NULL PRIMARY KEY,
-  'password' VARCHAR NOT NULL,
+  'id' INTEGER PRIMARY KEY AUTOINCREMENT,
+  'username' VARCHAR UNIQUE NOT NULL,
+  'password' VARCHAR UNIQUE NOT NULL,
   'email' VARCHAR
 );
-
-CREATE UNIQUE INDEX account_index ON user('email');
 
 # --- !Downs
 DROP TABLE user;
