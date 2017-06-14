@@ -10,6 +10,15 @@
 
     <hr>
 
+    @if(myForm.hasGlobalErrors) {
+        <ul class="error">
+        @for(error <- myForm.globalErrors) {
+            <li>@Messages(error.messages, error.args)</li>
+        }
+        </ul>
+    }
+
+
     @form(action = routes.LoginController.login()) {
         @CSRF.formField
         @inputText(myForm("username"), '_label -> "Username", 'class -> "form-control")
