@@ -8,7 +8,7 @@ import slick.driver.JdbcProfile
 import models.User
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+
 
 /**
   * Created by thangle on 6/6/17.

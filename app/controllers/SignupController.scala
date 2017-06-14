@@ -58,7 +58,7 @@ class SignupController @Inject() (val messagesApi: MessagesApi, userDao: UserDao
             Future.successful(Ok(views.html.signup(errorForm)))
           case (None, None) =>
             val newUser = User(None, username, password.bcrypt, email)
-            userDao.insert(newUser).map(_ => Redirect("/"))
+            userDao.insert(newUser).map(_ => Redirect("/").withSession("connected" -> username))
         }
 
       }
