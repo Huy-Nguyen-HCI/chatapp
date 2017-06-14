@@ -34,10 +34,11 @@ class UserDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
    */
   private class UsersTable(tag: Tag) extends Table[User](tag, "user") {
 
-    def username = column[String]("USERNAME", O.PrimaryKey)
+    def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
+    def username = column[String]("USERNAME")
     def password = column[String]("PASSWORD")
     def email = column[String]("EMAIL")
 
-    override def * = (username, password, email) <> (User.tupled, User.unapply)
+    override def * = (id.?, username, password, email) <> (User.tupled, User.unapply)
   }
 }
