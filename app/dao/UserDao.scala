@@ -1,6 +1,5 @@
 package dao
 
-import java.sql.SQLException
 import javax.inject.{Inject, Singleton}
 
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
@@ -40,5 +39,8 @@ class UserDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
     def email = column[String]("email")
 
     override def * = (id.?, username, password, email) <> (User.tupled, User.unapply)
+
+    def usernameIndex = index("username_constraint", username, unique = true)
+    def emailIndex = index("email_constraint", email, unique = true)
   }
 }

@@ -1,9 +1,10 @@
 # --- !Ups
 CREATE TABLE user (
-  'id' INTEGER PRIMARY KEY AUTOINCREMENT,
-  'username' VARCHAR UNIQUE NOT NULL,
-  'password' VARCHAR UNIQUE NOT NULL,
-  'email' VARCHAR
+  id INTEGER,
+  username VARCHAR UNIQUE NOT NULL,
+  password VARCHAR NOT NULL,
+  email VARCHAR UNIQUE NOT NULL,
+  PRIMARY KEY (id)
 );
 
 # --- !Downs

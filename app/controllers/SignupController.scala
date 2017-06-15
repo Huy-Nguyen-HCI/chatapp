@@ -4,9 +4,11 @@ import javax.inject.Inject
 
 import play.api.mvc._
 import play.api.data._
+import play.api.data.validation.Constraints.nonEmpty
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Controller
 import play.api.data.Forms._
+
 import models.User
 import dao.UserDao
 
@@ -25,7 +27,7 @@ class SignupController @Inject() (val messagesApi: MessagesApi, userDao: UserDao
       "username" -> nonEmptyText,
       "password" -> nonEmptyText,
       "retypePassword" -> nonEmptyText,
-      "email" -> email
+      "email" -> email.verifying(nonEmpty)
     )(UserSignupData.apply)(UserSignupData.unapply)
   )
 
