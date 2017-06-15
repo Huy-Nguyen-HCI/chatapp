@@ -19,25 +19,25 @@ class UserDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
       extends HasDatabaseConfigProvider[JdbcProfile] {
   import driver.api._
 
-  private val Users = TableQuery[UsersTable]
+  private val users = TableQuery[UsersTable]
 
   def findByUsername(username: String): Future[Option[User]] =
-    db.run(Users.filter(_.username === username).result.headOption)
+    db.run(users.filter(_.username === username).result.headOption)
 
   def findByEmail(email: String): Future[Option[User]] =
-    db.run(Users.filter(_.email === email).result.headOption)
+    db.run(users.filter(_.email === email).result.headOption)
 
-  def insert(user: User): Future[Unit] = db.run(Users += user).map(_ => ())
+  def insert(user: User): Future[Unit] = db.run(users += user).map(_ => ())
 
   /*
    * User table
    */
   private class UsersTable(tag: Tag) extends Table[User](tag, "user") {
 
-    def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
-    def username = column[String]("USERNAME")
-    def password = column[String]("PASSWORD")
-    def email = column[String]("EMAIL")
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def username = column[String]("username")
+    def password = column[String]("password")
+    def email = column[String]("email")
 
     override def * = (id.?, username, password, email) <> (User.tupled, User.unapply)
   }

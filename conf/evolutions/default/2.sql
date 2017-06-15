@@ -1,18 +1,15 @@
 # --- !Ups
 CREATE TABLE friendship (
-  'username1' VARCHAR,
-  'username2' VARCHAR,
+  'id1' INTEGER,
+  'id2' INTEGER,
   'status' INT,
   'action_id' INT,
-  FOREIGN KEY('username1') REFERENCES user('username'),
-  FOREIGN KEY('username2') REFERENCES user('username'),
-)
+  FOREIGN KEY('id1') REFERENCES user('id'),
+  FOREIGN KEY('id2') REFERENCES user('id')
+);
 
---- status code:
----   0: pending
----   1: accepted
----   2: declined
----   3: blocked
+CREATE UNIQUE INDEX friendship_index ON friendship ('id1', 'id2');
+
 
 # --- !Downs
 DROP TABLE friendship;
