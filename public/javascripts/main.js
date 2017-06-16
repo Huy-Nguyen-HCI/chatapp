@@ -47,10 +47,10 @@ $('.left .person').mousedown(function(){
 $('.add').click(function() {
   var username = prompt("Enter the username of your friend:")
   if (username && username.length > 0) {
-//    $.post("/add-friend", function(data) {
-//      go(500);
-//    });
-    $.notify("Friend request successfully sent.", "success");
+   $.post("/add-friend", {'targetUser' : username}, function(data) {
+     go(500);
+     $.notify("Friend request successfully sent.", "success");
+   });
   }
   else {
     $.notify("Username cannot be empty.", "error")
