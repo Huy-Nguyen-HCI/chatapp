@@ -73,7 +73,7 @@ body {
 .container .left input:focus {
   outline: none;
 }
-.container .left a.search {
+.container .left button.add {
   display: block;
   float: left;
   width: 42px;
@@ -85,6 +85,7 @@ body {
   background-repeat: no-repeat;
   background-position: top 12px left 14px;
   border-radius: 50%;
+  cursor: pointer;
 }
 .container .left .people {
   margin-left: -1px;

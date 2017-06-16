@@ -7,6 +7,7 @@ import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.stream.Materializer
 import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub, Source}
+import dao.{FriendshipDao, UserDao}
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,7 +18,9 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class ChatController @Inject()(implicit actorSystem: ActorSystem,
                                mat: Materializer,
-                               executionContext: ExecutionContext)
+                               executionContext: ExecutionContext,
+                               userDao: UserDao,
+                               friendshipDao: FriendshipDao)
   extends Controller {
 
   private val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
@@ -42,6 +45,27 @@ class ChatController @Inject()(implicit actorSystem: ActorSystem,
   def index: Action[AnyContent] = Action { implicit request =>
     val url = routes.ChatController.webSocket().webSocketURL()
     Ok(views.html.chat(url))
+  }
+
+  def addFriend = Action.async(parse.urlFormEncoded) { request =>
+
+    // get the target user's id
+    val targetUsername : String = request.body("username").head
+    val query = userDao.findByUsername(targetUsername)
+    val targetId : Future[Long] = query map {
+      case Some(targetUser) => targetUser.id.get
+      case _ => -1
+    }
+
+    val sourceUser = request.session.get("connected").map{ user =>
+      userDao.findByUsername(user)
+    }.get
+    val sourceId : Future[Long] = sourceUser map {
+      case Some(user1) => user1.id.get
+      case _ => -1
+    }
+
+    Future(Ok())
   }
 
   def webSocket: WebSocket = {
