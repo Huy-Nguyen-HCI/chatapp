@@ -29,7 +29,8 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "org.webjars.npm" % "jquery" % "3.2.1",
   "org.webjars.bower" % "bootstrap" % "3.3.7",
-  "org.webjars" % "flot" % "0.8.3"
+  "org.webjars" % "flot" % "0.8.3",
+  "org.webjars" % "angularjs" % "2.0.0-alpha.22"
 )
 
 herokuAppName in Compile := "morning-headland-89121"
