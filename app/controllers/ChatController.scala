@@ -65,7 +65,7 @@ class ChatController @Inject()(implicit actorSystem: ActorSystem,
       case _ => -1
     }
 
-    Future(Ok())
+    Future(Ok("pucca"))
   }
 
   def webSocket: WebSocket = {

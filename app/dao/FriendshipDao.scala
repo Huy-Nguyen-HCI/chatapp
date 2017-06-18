@@ -50,7 +50,7 @@ class FriendshipDao @Inject() (protected val dbConfigProvider: DatabaseConfigPro
     def status = column[Int]("status")
     def actionId = column[Int]("action_id")
 
-    override def * = (id1, id2, status, actionId) <> (Friendship.tupled, Friendship.unapply)
+    override def * = (id1, id2, status, actionId) <> ((Friendship.apply _).tupled, Friendship.unapply)
     def idx = index("friendship_index", (id1, id2), unique = true)
   }
 }
