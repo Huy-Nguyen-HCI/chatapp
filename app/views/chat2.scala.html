@@ -1,6 +1,7 @@
 @(myForm: Form[ChatData])(implicit request: RequestHeader, messages: Messages, session: Session)
 
-@import helper._
+@import play.filters.csrf.CSRF
+@token = @{ CSRF.getToken.get }
 
 <!DOCTYPE html>
 
@@ -15,6 +16,7 @@
     <script src='@routes.Assets.versioned("javascripts/eventsource.js")'></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-cookies.js"></script>
     <script src='@routes.Assets.versioned("javascripts/app.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/services.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/controllers.js")'></script>
@@ -38,15 +40,14 @@
 
     <div id="footer">
         <form ng-submit="submitMsg()">
-            @CSRF.formField
+            <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
             <input type="text" name="chat" id="textField" ng-model="inputText"
                    placeholder="Say something" class="ng-pristine ng-valid input-block-level" />
-            <input type="button" class="btn btn-primary" id="saySomething" value="Submit" ng-click="submitMsg()" />
+            <input type="button" class="btn btn-primary" id="saySomething" value="Submit" />
         </form>
     </div>
+
+    <div></div>
 </div>
-<script>
-    $('input[name="csrfToken"]').attr('ng-model', 'csrfToken');
-</script>
 </body>
 </html>

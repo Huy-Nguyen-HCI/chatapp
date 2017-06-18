@@ -1,8 +1,8 @@
 'use strict';
 
 /** Controllers */
-angular.module('sseChat.controllers', ['sseChat.services']).
-    controller('ChatCtrl', function ($scope, $http, chatModel) {
+angular.module('sseChat.controllers', ['sseChat.services', 'ngCookies']).
+    controller('ChatCtrl', function ($scope, $http, $cookies, chatModel) {
         $scope.rooms = chatModel.getRooms();
         $scope.msgs = [];
         $scope.inputText = "";
@@ -19,8 +19,22 @@ angular.module('sseChat.controllers', ['sseChat.services']).
 
         /** posting chat text to server */
         $scope.submitMsg = function () {
-            $http.post("/chat", { text: $scope.inputText, user: $scope.user,
-                time: (new Date()).toUTCString(), room: $scope.currentRoom.value });
+            var csrfValue = $("#csrfToken").attr("value");
+
+            var req = {
+                method: 'POST',
+                url: '/chat',
+                headers: {
+                    'Csrf-Token': csrfValue
+                },
+                data: {
+                    text: $scope.inputText,
+                    user: $scope.user,
+                    time: (new Date()).toUTCString(),
+                    room: $scope.currentRoom.value,
+                }
+            }
+            $http(req);
             $scope.inputText = "";
         };
 
