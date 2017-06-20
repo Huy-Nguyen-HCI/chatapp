@@ -38,11 +38,11 @@
             </div>
             <div class="right">
                 <div class="top"><span>To: <span class="name">Dog Woofson</span></span></div>
-                <div class="chat" data-chat="room1">
+                <div class="chat" ng-repeat="r in rooms" data-chat="room{{$index+1}}">
                     <div class="conversation-start">
                         <span>Today, 5:38 PM</span>
                     </div>
-                    <div class="bubble you {{msg.who}} msg" ng-repeat="msg in msgs | limitTo:-4">
+                    <div class="bubble you {{msg.who}} msg" ng-repeat="msg in msgs">
                         {{msg.text}}
                         <br/>
                     </div>
