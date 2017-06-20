@@ -2,8 +2,10 @@ function init(webSocketURL) {
 
   var connection = new WebSocket(webSocketURL),
       inputBox = $('#input-box'),
-      messages = $('#message-area');
+      messages = $('.chat');
 
+  console.log(webSocketURL);
+  
   var send = function() {
       var text = inputBox.val();
       inputBox.val("");
