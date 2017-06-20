@@ -20,6 +20,8 @@ class UserDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
 
   private val users = TableQuery[UsersTable]
 
+  def list: Future[Seq[User]] = db.run(users.result)
+
   def findByUsername(username: String): Future[Option[User]] =
     db.run(users.filter(_.username === username).result.headOption)
 
