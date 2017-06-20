@@ -22,6 +22,11 @@ angular
         $('.chat[data-chat = '+findChat+']').addClass('active-chat');
       }
     });
+
+    // tell MathJax to recognize inline math by $ $
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [["$","$"]]}
+      });
   });
 
 
@@ -63,6 +68,7 @@ angular
   /** handle incoming messages: add to messages array */
   $scope.addMsg = function (msg) {
     $scope.$apply(function () { $scope.msgs.push(JSON.parse(msg.data)); });
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
   };
 
   /** start listening on messages from selected room */
