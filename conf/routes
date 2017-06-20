@@ -13,15 +13,10 @@ GET     /logout                     controllers.LoginController.logout
 GET     /signup                     controllers.SignupController.index
 POST    /signup                     controllers.SignupController.signup
 
-GET     /chat                       controllers.ChatController.index
-GET     /ws                         controllers.ChatController.webSocket
-
-GET     /chat2                      controllers.ChatApplication.index
-
+GET     /chat                       controllers.ChatApplication.index
 GET     /chatFeed/:room             controllers.ChatApplication.chatFeed(room: String)
 POST    /chat                       controllers.ChatApplication.postMessage
 
-POST    /dummy                      controllers.ChatApplication.dummy
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

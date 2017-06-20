@@ -25,7 +25,7 @@ class ChatApplication @Inject() (val messagesApi: MessagesApi) extends Controlle
   val (chatOut, chatChannel) = Concurrent.broadcast[JsValue]
 
   /** Controller action serving AngularJS chat page */
-  def index = Action { implicit request => Ok(views.html.chat2(chatForm)) }
+  def index = Action { implicit request => Ok(views.html.chat(chatForm)) }
 
   /** Controller action for POSTing chat messages */
   def postMessage = Action(parse.json) { req => chatChannel.push(req.body); Ok }

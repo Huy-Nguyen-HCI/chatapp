@@ -1,4 +1,8 @@
-@(url: String)
+@(myForm: Form[ChatData])(implicit request: RequestHeader, messages: Messages, session: Session)
+
+@import play.filters.csrf.CSRF
+@token = @{ CSRF.getToken.get }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,177 +13,93 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
     <link rel="stylesheet" media="screen" href='@routes.Assets.versioned("stylesheets/chat.css")'>
     <link rel="shortcut icon" type="image/png" href='@routes.Assets.versioned("images/favicon.png")'>
-    <title>Chat Room</title>
 
+    <title>Chat Room</title>
 </head>
 
-<body>
-<div class="wrapper">
-    <div class="container">
-        <div class="left">
-            <div class="top">
-                <input type="text" />
-               <button class="add"></button>
+<body ng-app="sseChat">
+<div ng-controller="ChatCtrl">
+    <div class="wrapper">
+        <div class="container">
+            <div class="left">
+                <div class="top">
+                    <input type="text" />
+                   <button class="add"></button>
+                </div>
+                <ul class="people">
+                    <li class="person" ng-repeat="r in rooms" data-chat="room{{$index}}">
+                        <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="" />
+                        <span class="name">LMT</span>
+                        <span class="time">11:54 PM</span>
+                        <span class="preview">I've forgotten how it felt before</span>
+                    </li>
+                    <!--<li class="person" data-chat="room1">-->
+                        <!--<img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="" />-->
+                        <!--<span class="name">LMT</span>-->
+                        <!--<span class="time">11:54 PM</span>-->
+                        <!--<span class="preview">I've forgotten how it felt before</span>-->
+                    <!--</li>-->
+                    <!--<li class="person" data-chat="room2">-->
+                        <!--<img src="https://s3.postimg.org/h9q4sm433/img3.jpg" alt="" />-->
+                        <!--<span class="name">Louis CK</span>-->
+                        <!--<span class="time">2:09 PM</span>-->
+                        <!--<span class="preview">But we’re probably gonna need a new carpet.</span>-->
+                    <!--</li>-->
+                    <!--<li class="person" data-chat="room3">-->
+                        <!--<img src="https://s3.postimg.org/quect8isv/img4.jpg" alt="" />-->
+                        <!--<span class="name">Bo Jackson</span>-->
+                        <!--<span class="time">2:09 PM</span>-->
+                        <!--<span class="preview">It’s not that bad...</span>-->
+                    <!--</li>-->
+                    <!--<li class="person" data-chat="room4">-->
+                        <!--<img src="https://s16.postimg.org/ete1l89z5/img5.jpg" alt="" />-->
+                        <!--<span class="name">Michael Jordan</span>-->
+                        <!--<span class="time">2:09 PM</span>-->
+                        <!--<span class="preview">Wasup for the third time like is you bling bitch</span>-->
+                    <!--</li>-->
+                    <!--<li class="person" data-chat="room5">-->
+                        <!--<img src="https://s30.postimg.org/kwi7e42rh/img6.jpg" alt="" />-->
+                        <!--<span class="name">Drake</span>-->
+                        <!--<span class="time">2:09 PM</span>-->
+                        <!--<span class="preview">howdoyoudoaspace</span>-->
+                    <!--</li>-->
+                </ul>
             </div>
-            <ul class="people">
-                <li class="person" data-chat="person2">
-                    <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="" />
-                    <span class="name">LMT</span>
-                    <span class="time">11:54 PM</span>
-                    <span class="preview">I've forgotten how it felt before</span>
-                </li>
-                <li class="person" data-chat="person3">
-                    <img src="https://s3.postimg.org/h9q4sm433/img3.jpg" alt="" />
-                    <span class="name">Louis CK</span>
-                    <span class="time">2:09 PM</span>
-                    <span class="preview">But we’re probably gonna need a new carpet.</span>
-                </li>
-                <li class="person" data-chat="person4">
-                    <img src="https://s3.postimg.org/quect8isv/img4.jpg" alt="" />
-                    <span class="name">Bo Jackson</span>
-                    <span class="time">2:09 PM</span>
-                    <span class="preview">It’s not that bad...</span>
-                </li>
-                <li class="person" data-chat="person5">
-                    <img src="https://s16.postimg.org/ete1l89z5/img5.jpg" alt="" />
-                    <span class="name">Michael Jordan</span>
-                    <span class="time">2:09 PM</span>
-                    <span class="preview">Wasup for the third time like is you bling bitch</span>
-                </li>
-                <li class="person" data-chat="person6">
-                    <img src="https://s30.postimg.org/kwi7e42rh/img6.jpg" alt="" />
-                    <span class="name">Drake</span>
-                    <span class="time">2:09 PM</span>
-                    <span class="preview">howdoyoudoaspace</span>
-                </li>
-            </ul>
-        </div>
-        <div class="right">
-            <div class="top"><span>To: <span class="name">Dog Woofson</span></span></div>
-            <div class="chat" data-chat="person2">
-                <div class="conversation-start">
-                    <span>Today, 5:38 PM</span>
+            <div class="right">
+                <div class="top"><span>To: <span class="name">Dog Woofson</span></span></div>
+                <div class="chat" data-chat="room1">
+                    <div class="conversation-start">
+                        <span>Today, 5:38 PM</span>
+                    </div>
+                    <div class="bubble you {{msg.who}} msg" ng-repeat="msg in msgs | limitTo:-4">
+                        {{msg.text}}
+                        <br/>
+                    </div>
                 </div>
-                <div class="bubble you">
-                    Hello, can you hear me?
+                <div class="write">
+                    <a href="javascript:;" class="write-link attach"></a>
+                    <form ng-submit="submitMsg()">
+                        <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
+                        <input type="text" name="chat" id="input-box" ng-model="inputText"
+                               placeholder="Say something" class="ng-pristine ng-valid input-block-level" />
+                    </form>
+                    <a href="javascript:;" class="write-link smiley"></a>
+                    <a href="javascript:;" class="write-link send"></a>
                 </div>
-                <div class="bubble you">
-                    I'm in California dreaming
-                </div>
-                <div class="bubble me">
-                    ... about who we used to be.
-                </div>
-                <div class="bubble me">
-                    Are you serious?
-                </div>
-                <div class="bubble you">
-                    When we were younger and free...
-                </div>
-                <div class="bubble you">
-                    I've forgotten how it felt before
-                </div>
-            </div>
-            <div class="chat" data-chat="person3">
-                <div class="conversation-start">
-                    <span>Today, 3:38 AM</span>
-                </div>
-                <div class="bubble you">
-                    Hey human!
-                </div>
-                <div class="bubble you">
-                    Umm... Someone took a shit in the hallway.
-                </div>
-                <div class="bubble me">
-                    ... what.
-                </div>
-                <div class="bubble me">
-                    Are you serious?
-                </div>
-                <div class="bubble you">
-                    I mean...
-                </div>
-                <div class="bubble you">
-                    It’s not that bad...
-                </div>
-                <div class="bubble you">
-                    But we’re probably gonna need a new carpet.
-                </div>
-            </div>
-            <div class="chat" data-chat="person4">
-                <div class="conversation-start">
-                    <span>Yesterday, 4:20 PM</span>
-                </div>
-                <div class="bubble me">
-                    Hey human!
-                </div>
-                <div class="bubble me">
-                    Umm... Someone took a shit in the hallway.
-                </div>
-                <div class="bubble you">
-                    ... what.
-                </div>
-                <div class="bubble you">
-                    Are you serious?
-                </div>
-                <div class="bubble me">
-                    I mean...
-                </div>
-                <div class="bubble me">
-                    It’s not that bad...
-                </div>
-            </div>
-            <div class="chat" data-chat="person5">
-                <div class="conversation-start">
-                    <span>Today, 6:28 AM</span>
-                </div>
-                <div class="bubble you">
-                    Wasup
-                </div>
-                <div class="bubble you">
-                    Wasup
-                </div>
-                <div class="bubble you">
-                    Wasup for the third time like is <br />you blind bitch
-                </div>
-
-            </div>
-            <div class="chat" data-chat="person6">
-                <div class="conversation-start">
-                    <span>Monday, 1:27 PM</span>
-                </div>
-                <div class="bubble you">
-                    So, how's your new phone?
-                </div>
-                <div class="bubble you">
-                    You finally have a smartphone :D
-                </div>
-                <div class="bubble me">
-                    Drake?
-                </div>
-                <div class="bubble me">
-                    Why aren't you answering?
-                </div>
-                <div class="bubble you">
-                    howdoyoudoaspace
-                </div>
-            </div>
-            <div class="write">
-                <a href="javascript:;" class="write-link attach"></a>
-                <input id="input-box" type="text" />
-                <a href="javascript:;" class="write-link smiley"></a>
-                <a href="javascript:;" class="write-link send"></a>
             </div>
         </div>
     </div>
 </div>
 
 <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.min.js")'></script>
+<script src='@routes.Assets.versioned("javascripts/eventsource.js")'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-cookies.js"></script>
+<script src='@routes.Assets.versioned("javascripts/app.js")'></script>
+<script src='@routes.Assets.versioned("javascripts/services.js")'></script>
+<script src='@routes.Assets.versioned("javascripts/controllers.js")'></script>
 <script type='text/javascript' src='@routes.Assets.versioned("lib/flot/jquery.flot.js")'></script>
-<script type='text/javascript' src='@routes.Assets.versioned("es6scripts/chat.js")'></script>
 <script type='text/javascript' src='@routes.Assets.versioned("javascripts/notify.min.js")'></script>
-<script type='text/javascript'>
-    init("@url");
-</script>
 </body>
 
 </html>
