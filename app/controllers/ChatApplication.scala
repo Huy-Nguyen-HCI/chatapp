@@ -47,10 +47,6 @@ class ChatApplication @Inject() (val messagesApi: MessagesApi) extends Controlle
       &> EventSource()
     ).as("text/event-stream")
   }
-
-  def dummy = Action {
-    Ok("hello")
-  }
 }
 
 case class ChatData(message: String)
