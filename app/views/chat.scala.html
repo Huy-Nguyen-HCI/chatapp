@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
     <link rel="stylesheet" media="screen" href='@routes.Assets.versioned("stylesheets/chat.css")'>
     <link rel="shortcut icon" type="image/png" href='@routes.Assets.versioned("images/favicon.png")'>
-
+    <link rel='stylesheet prefetch' href='https://storage.googleapis.com/code.getmdl.io/1.0.2/material.blue_grey-red.min.css'>
+    <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
     <title>Chat Room</title>
 </head>
 
@@ -69,14 +70,20 @@
                     </div>
                 </div>
                 <div class="write">
-                    <a href="javascript:;" class="write-link attach"></a>
+                    <form enctype="multipart/form-data">
+                        <div class="file-upload-container">
+                            <input type="file" multiple id="fileInput" name="fileInput"
+                                  onchange="submitUploadForm()" />
+                        </div>
+                    </form>
+                    <a class="write-link attach" href="#" onclick="selectFile()"></a>
                     <form ng-submit="submitMsg()">
                         <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
                         <input type="text" name="chat" id="input-box" ng-model="inputText"
                                placeholder="Say something" class="ng-pristine ng-valid input-block-level" />
                     </form>
-                    <a href="javascript:;" class="write-link smiley"></a>
-                    <a href="javascript:;" class="write-link send"></a>
+                    <a class="write-link smiley"></a>
+                    <a class="write-link send"></a>
                 </div>
             </div>
         </div>
@@ -95,6 +102,39 @@
 <script src='@routes.Assets.versioned("javascripts/app.js")'></script>
 <script src='@routes.Assets.versioned("javascripts/services.js")'></script>
 <script src='@routes.Assets.versioned("javascripts/controllers.js")'></script>
+
+<script>
+    // configure file upload
+    function selectFile() {
+        $('#fileInput').click();
+    }
+
+    function submitUploadForm() {
+        console.log("hello");
+        var csrfValue = $("#csrfToken").attr("value");
+       var file = $('#fileInput').get(0).files[0];
+       var formData = new FormData();
+       formData.append('file', file);
+       $.ajax({
+           url: '/upload',
+           data: formData,
+           headers: {
+            'Csrf-Token': csrfValue
+           },
+           type: 'POST',
+           contentType: false,
+           processData: false,
+           success: function (data) {
+             //call your jQuery action here
+             alert('Upload completed: ' + data);
+           },
+           error: function (jqXHR, textStatus, errorThrown) {
+             alert(textStatus + ': ' + errorThrown);
+           }
+        });
+        return false;
+        }
+</script>
 </body>
 
 </html>

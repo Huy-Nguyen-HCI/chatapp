@@ -17,6 +17,7 @@ GET     /chat                       controllers.ChatApplication.index
 GET     /chatFeed/:room             controllers.ChatApplication.chatFeed(room: String)
 POST    /chat                       controllers.ChatApplication.postMessage
 
+POST    /upload                     controllers.FileController.upload
 
 GET     /api/users/:name            controllers.api.UserAPI.findByUsername(name: String)
 

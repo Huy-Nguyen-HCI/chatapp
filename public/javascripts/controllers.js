@@ -4,7 +4,7 @@
 
 angular
   .module('sseChat.controllers', ['sseChat.services'])
-  .controller('ChatCtrl', function ($scope, $http, chatModel) {
+  .controller('ChatCtrl', ['$scope', '$http', 'chatModel', function ($scope, $http, chatModel) {
 
   angular.element(document).ready(function () {
     $('.chat[data-chat=room1]').addClass('active-chat');
@@ -26,9 +26,13 @@ angular
     // tell MathJax to recognize inline math by $ $
     MathJax.Hub.Config({
         tex2jax: {inlineMath: [["$","$"]]}
-      });
-  });
+    });
 
+    $('#fileInput').onchange = function() {
+        console.log("changed");
+        $(this).closest('form').submit();
+    }
+  });
 
   $scope.rooms = chatModel.getRooms();
   $scope.msgs = [];
@@ -65,6 +69,37 @@ angular
     $scope.inputText = "";
   };
 
+//  /** upload file to server **/
+//
+//  $scope.fileChanged = function(ele) {
+//    var files = ele.files;
+//    var csrfValue = $("#csrfToken").attr("value");
+//    var file = $scope.fileInput.get(0).files[0];
+//    var formData = new FormData();
+//    formData.append('file', file);
+//
+//    var req = {
+//      method: 'POST',
+//      url: '/upload',
+//      headers: {
+//        'Csrf-Token' : csrfValue
+//      },
+//      data: formData
+//    }
+//
+//    $http(req).then(
+//      function successCallback(response) {
+//        // this callback will be called asynchronously
+//        // when the response is available
+//        console.log("success", response);
+//      },
+//      function errorCallback(response) {
+//        // called asynchronously if an error occurs
+//        // or server returns response with an error status.
+//        console.log("error", response);
+//      }
+//    );
+
   /** handle incoming messages: add to messages array */
   $scope.addMsg = function (msg) {
     $scope.$apply(function () { $scope.msgs.push(JSON.parse(msg.data)); });
@@ -78,4 +113,4 @@ angular
   };
 
   $scope.listen();
-});
+}]);

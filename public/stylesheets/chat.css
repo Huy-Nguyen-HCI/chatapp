@@ -496,3 +496,8 @@ li.dropdown {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+.file-upload-container {
+  height: 0px;
+  overflow: hidden;
+}
