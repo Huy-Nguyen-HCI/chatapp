@@ -35,6 +35,8 @@ libraryDependencies ++= Seq(
 
 herokuAppName in Compile := "morning-headland-89121"
 
+javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
+
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "pt-lmt.controllers._"
 
