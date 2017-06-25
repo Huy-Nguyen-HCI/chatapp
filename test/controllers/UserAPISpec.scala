@@ -18,7 +18,7 @@ import play.api.test.Helpers.{GET => GET_REQUEST, _}
 /**
   * Created by thang on 6/20/17.
   */
-class APISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter with CachedInject
+class UserAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter with CachedInject
                                with Writeables {
 
   import models._

@@ -39,11 +39,12 @@ class FriendshipDao @Inject() (protected val dbConfigProvider: DatabaseConfigPro
   }
 
 
-  def checkFriendship(id1: Long, id2: Long): Future[(Int, Long)] = {
+  def checkFriendship(id1: Long, id2: Long): Future[Option[(Int, Long)]] = {
     // SELECT * FROM `friendship` WHERE `user_one_id` = 1 AND `user_two_id` = 2 AND `status` = 1
     val (first, second) = sortIds(id1, id2)
     val q = friendships.filter(f => f.id1 === first && f.id2 === second)
-                       .map(res => (res.status, res.actionId)).result.head
+                       .map(res => (res.status, res.actionId))
+                       .result.headOption
     db.run(q)
   }
 

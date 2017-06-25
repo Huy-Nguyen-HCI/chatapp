@@ -6,7 +6,7 @@ import play.api.mvc._
 import models.Friendship
 import dao.{FriendshipDao, UserDao}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 /**
   * Created by thang on 6/22/17.
@@ -29,14 +29,13 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
       friendship <- friendshipDao.checkFriendship(s, r)
     } yield {
       // check if the sender is blocked by the receiver
-      val (status, actionId) = friendship
-
-      if (status == Friendship.STATUS_BLOCKED && actionId == r)
-        BadRequest("Cannot send friend request")
-      else {
-        friendshipDao.insertOrUpdateFriendship(s, r, Friendship.STATUS_PENDING)
-        Ok("Success")
+      if (friendship.isDefined) {
+        val (status, actionId) = friendship.get
+        if (status == Friendship.STATUS_BLOCKED && actionId == r)
+          BadRequest("Cannot send friend request")
       }
+      friendshipDao.insertOrUpdateFriendship(s, r, Friendship.STATUS_PENDING)
+      Ok("Success")
     }
 
   }

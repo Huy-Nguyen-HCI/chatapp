@@ -6,7 +6,7 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.db.DBApi
 import play.api.db.evolutions.{Evolution, Evolutions, SimpleEvolutionsReader}
-import play.api.test.Helpers.await
+import play.api.test.Helpers._
 
 
 /**
@@ -44,14 +44,14 @@ class FriendshipDAOSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInj
       // the ids are in correct order (first < second)
       await(friendshipDao.insertOrUpdateFriendship(1, 2, Friendship.STATUS_PENDING))
 
-      var res = await(friendshipDao.checkFriendship(1, 2))
+      var res = await(friendshipDao.checkFriendship(1, 2)).get
       res._1 mustEqual Friendship.STATUS_PENDING
       res._2 mustEqual 1
 
       // the ids are not in correct order (first > second)
       await(friendshipDao.insertOrUpdateFriendship(3, 1, Friendship.STATUS_PENDING))
 
-      res = await(friendshipDao.checkFriendship(1, 3))
+      res = await(friendshipDao.checkFriendship(1, 3)).get
       res._1 mustEqual Friendship.STATUS_PENDING
       res._2 mustEqual 3
     }
@@ -61,7 +61,7 @@ class FriendshipDAOSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInj
       await(friendshipDao.insertOrUpdateFriendship(1, 2, Friendship.STATUS_PENDING))
       await(friendshipDao.insertOrUpdateFriendship(2, 1, Friendship.STATUS_ACCEPTED))
 
-      val res = await(friendshipDao.checkFriendship(1, 2))
+      val res = await(friendshipDao.checkFriendship(1, 2)).get
       res._1 mustEqual Friendship.STATUS_ACCEPTED
       res._2 mustEqual 2
     }
