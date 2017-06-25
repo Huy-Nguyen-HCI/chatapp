@@ -65,12 +65,8 @@ class FileController @Inject() (implicit val messagesApi: MessagesApi) extends C
   /**
     * A generic operation on the temporary file that deletes the temp file after completion.
     */
-  private def operateOnTempFile(file: File) = {
-//    val size = Files.size(file.toPath)
-//    logger.info(s"size = ${size}")
-//    Files.deleteIfExists(file.toPath)
-//    size
-    Files.move(file.toPath, Paths.get("file-upload/" + file.getName))
+  private def operateOnTempFile(file: File, fileName: String) = {
+    Files.move(file.toPath, Paths.get("file-upload/" + fileName))
   }
 
   /**
@@ -80,9 +76,9 @@ class FileController @Inject() (implicit val messagesApi: MessagesApi) extends C
     */
   def upload = Action(parse.multipartFormData(handleFilePartAsFile)) { implicit request =>
     val fileOption = request.body.file("file").map {
-      case FilePart(key, filename, contentType, file) =>
-        logger.info(s"key = ${key}, filename = ${filename}, contentType = ${contentType}, file = $file")
-        val data = operateOnTempFile(file)
+      case FilePart(key, fileName, contentType, file) =>
+        logger.info(s"key = ${key}, filename = ${fileName}, contentType = ${contentType}, file = $file")
+        val data = operateOnTempFile(file, fileName)
         data
     }
 
