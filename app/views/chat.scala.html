@@ -63,15 +63,18 @@
                         <span>Today, 5:38 PM</span>
                     </div>
                     <div class="bubble you {{msg.who}} msg" ng-repeat="msg in msgs">
-                        {{msg.text}}
+                        <div ng-if="msg.link">
+                            <a href="{{msg.link}}">{{msg.fileName}}</a>
+                        </div>
+                        <div ng-if="msg.text">
+                            {{msg.text}}
+                        </div>
                         <br/>
                     </div>
                 </div>
                 <div class="write">
                     <form enctype="multipart/form-data">
                         <div class="file-upload-container">
-                            <!--<input type="file" multiple id="fileInput" name="fileInput"-->
-                                  <!--onchange="submitUploadForm()" />-->
                             <button type="file" id="fileInput" ngf-select="uploadFiles($file, $invalidFiles)" multiple></button>
                         </div>
                     </form>

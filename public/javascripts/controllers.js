@@ -69,6 +69,26 @@ angular
     $scope.inputText = "";
   };
 
+  $scope.displayFile = function(link, fileName) {
+    var csrfToken = $("#csrfToken").attr("value");
+    var req = {
+      method: 'POST',
+      url: '/chat',
+      headers: {
+        'Csrf-Token': csrfToken
+      },
+      data: {
+        link: link,
+        fileName: fileName,
+        user: $scope.user,
+        time: (new Date()).toUTCString(),
+        room: $scope.currentRoom.value,
+      }
+    }
+    $http(req);
+    $scope.inputText = "";
+  };
+
   /* upload file in chat */
   $scope.uploadFiles = function(file, errFiles) {
     var csrfToken = $("#csrfToken").attr("value");
@@ -85,8 +105,8 @@ angular
 
       file.upload.then(function (response) {
           $timeout(function () {
-            console.log("success");
             file.result = response.data;
+            $scope.displayFile("/file-upload/" + file.name, file.name)
           });
       }, function (response) {
           if (response.status > 0) {
