@@ -19,7 +19,7 @@
             @session.get("connected").map { user =>
                 <span>@user</span> | <a href="/logout">logout</a>
             }.getOrElse {
-                <a href="/login">login</a> | <a href="/signup">sign up</a>
+                <a href="/login">log in</a> | <a href="/signup">sign up</a>
             }
             </div>
 

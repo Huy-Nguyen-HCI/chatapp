@@ -9,15 +9,35 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
     <link rel="stylesheet" media="screen" href='@routes.Assets.versioned("stylesheets/chat.css")'>
     <link rel="shortcut icon" type="image/png" href='@routes.Assets.versioned("images/favicon.png")'>
-
     <title>Chat Room</title>
 </head>
 
 <body ng-app="sseChat">
+<ul class="topnav">
+    <li><a class="active" href="#">Chat</a></li>
+    <li class="dropdown">
+        <a class="dropbtn">Notifications</a>
+        <div class="dropdown-content">
+            <a href="#">
+                <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
+                <div class="right">LMT has sent you a friend request.</div>
+            </a>
+            <a href="#">
+                <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
+                <div class="right">LMT ran away.</div>
+            </a>
+            <a href="#">
+                <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
+                <div class="right">A wild LMT appears!</div>
+            </a>
+        </div>
+      </li>
+    <li><a href="/profile">Profile</a></li>
+    <li class="right"><a href="/logout">Log out</a></li>
+</ul>
 <div ng-controller="ChatCtrl">
     <div class="wrapper">
         <div class="container">
@@ -43,19 +63,29 @@
                         <span>Today, 5:38 PM</span>
                     </div>
                     <div class="bubble you {{msg.who}} msg" ng-repeat="msg in msgs">
-                        {{msg.text}}
+                        <div ng-if="msg.link">
+                            <a href="{{msg.link}}">{{msg.fileName}}</a>
+                        </div>
+                        <div ng-if="msg.text">
+                            {{msg.text}}
+                        </div>
                         <br/>
                     </div>
                 </div>
                 <div class="write">
-                    <a href="javascript:;" class="write-link attach"></a>
+                    <form enctype="multipart/form-data">
+                        <div class="file-upload-container">
+                            <button type="file" id="fileInput" ngf-select="uploadFiles($file, $invalidFiles)" multiple></button>
+                        </div>
+                    </form>
+                    <a class="write-link attach" href="#" onclick="selectFile()"></a>
                     <form ng-submit="submitMsg()">
                         <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
                         <input type="text" name="chat" id="input-box" ng-model="inputText"
                                placeholder="Say something" class="ng-pristine ng-valid input-block-level" />
                     </form>
-                    <a href="javascript:;" class="write-link smiley"></a>
-                    <a href="javascript:;" class="write-link send"></a>
+                    <a class="write-link smiley"></a>
+                    <a class="write-link send"></a>
                 </div>
             </div>
         </div>
@@ -64,8 +94,11 @@
 
 <!-- libraries -->
 <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.min.js")'></script>
-<script src='@routes.Assets.versioned("javascripts/lib/eventsource.js")'></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+<script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/eventsource.js")'></script>
+<script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/ng-file-upload.min.js")'></script>
+<script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/ng-file-upload-shim.min.js")'></script>
 <script type='text/javascript' src='@routes.Assets.versioned("lib/flot/jquery.flot.js")'></script>
 <script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/notify.min.js")'></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
@@ -75,6 +108,10 @@
 <script src='@routes.Assets.versioned("javascripts/app.js")'></script>
 <script src='@routes.Assets.versioned("javascripts/services.js")'></script>
 <script src='@routes.Assets.versioned("javascripts/controllers.js")'></script>
+<script src='@routes.Assets.versioned("javascripts/main.js")'></script>
+<script>
+
+</script>
 </body>
 
 </html>

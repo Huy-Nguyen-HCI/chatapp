@@ -29,7 +29,10 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
   )
 
   def index = Action { implicit request =>
-    Ok(views.html.login(userForm))
+    request.session.get("connected") match {
+      case None => Ok(views.html.login(userForm))
+      case Some(username) => Redirect(routes.ChatApplication.index())
+    }
   }
 
   def login = Action.async { implicit request =>

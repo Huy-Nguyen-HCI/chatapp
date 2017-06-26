@@ -1,3 +1,4 @@
+// send friend request to other user
 $('.left .top .add').on('click', function() {
   var jsonData = {sender: "thang", receiver: "pucca"};
   var csrfToken = $("#csrfToken").attr("value");
@@ -9,3 +10,9 @@ $('.left .top .add').on('click', function() {
     data: JSON.stringify(jsonData),
   });
 });
+
+
+// trigger file upload selection
+function selectFile() {
+  $('#fileInput').click();
+}
