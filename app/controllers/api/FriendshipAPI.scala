@@ -5,8 +5,9 @@ import javax.inject.Inject
 import play.api.mvc._
 import models.Friendship
 import dao.{FriendshipDao, UserDao}
+import play.api.libs.json.JsValue
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Created by thang on 6/22/17.
@@ -16,12 +17,20 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
                     extends Controller {
 
 
-  def sendFriendRequest = Action.async(parse.json) { request =>
-
-    val senderName = (request.body \ "sender").as[String]
-    val receiverName = (request.body \ "receiver").as[String]
+  // helper function to query the pair of (sender, receiver) from database
+  private def getUserIdPair(json: JsValue) = {
+    val senderName = (json \ "sender").as[String]
+    val receiverName = (json \ "receiver").as[String]
     val senderId = userDao.findByUsername(senderName).map(res => res.get.id.get)
     val receiverId = userDao.findByUsername(receiverName).map(res => res.get.id.get)
+
+    (senderId, receiverId)
+  }
+
+
+  def sendFriendRequest = Action.async(parse.json) { request =>
+
+    val (senderId, receiverId) = getUserIdPair(request.body)
 
     for {
       s <- senderId
@@ -37,6 +46,17 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
       friendshipDao.insertOrUpdateFriendship(s, r, Friendship.STATUS_PENDING)
       Ok("Success")
     }
+  }
 
+
+  def acceptFriendRequest = Action.async(parse.json) { request =>
+
+    val (senderId, receiverId) = getUserIdPair(request.body)
+
+    for {
+      s <- senderId
+      r <- receiverId
+      _ <- friendshipDao.insertOrUpdateFriendship(s, r, Friendship.STATUS_ACCEPTED)
+    } yield Ok("Success")
   }
 }
