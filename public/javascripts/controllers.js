@@ -4,7 +4,8 @@
 
 angular
   .module('sseChat.controllers', ['sseChat.services'])
-  .controller('ChatCtrl', ['$scope', '$http', 'chatModel', function ($scope, $http, chatModel) {
+  .controller('ChatCtrl', ['$scope', '$http', 'chatModel', 'Upload', '$timeout',
+  function ($scope, $http, chatModel, Upload, $timeout) {
 
   angular.element(document).ready(function () {
     $('.chat[data-chat=room1]').addClass('active-chat');
@@ -50,13 +51,12 @@ angular
 
   /** posting chat text to server */
   $scope.submitMsg = function () {
-    var csrfValue = $("#csrfToken").attr("value");
-
+    var csrfToken = $("#csrfToken").attr("value");
     var req = {
       method: 'POST',
       url: '/chat',
       headers: {
-        'Csrf-Token': csrfValue
+        'Csrf-Token': csrfToken
       },
       data: {
         text: $scope.inputText,
@@ -69,36 +69,33 @@ angular
     $scope.inputText = "";
   };
 
-//  /** upload file to server **/
-//
-//  $scope.fileChanged = function(ele) {
-//    var files = ele.files;
-//    var csrfValue = $("#csrfToken").attr("value");
-//    var file = $scope.fileInput.get(0).files[0];
-//    var formData = new FormData();
-//    formData.append('file', file);
-//
-//    var req = {
-//      method: 'POST',
-//      url: '/upload',
-//      headers: {
-//        'Csrf-Token' : csrfValue
-//      },
-//      data: formData
-//    }
-//
-//    $http(req).then(
-//      function successCallback(response) {
-//        // this callback will be called asynchronously
-//        // when the response is available
-//        console.log("success", response);
-//      },
-//      function errorCallback(response) {
-//        // called asynchronously if an error occurs
-//        // or server returns response with an error status.
-//        console.log("error", response);
-//      }
-//    );
+  /* upload file in chat */
+  $scope.uploadFiles = function(file, errFiles) {
+    var csrfToken = $("#csrfToken").attr("value");
+    $scope.f = file;
+    $scope.errFile = errFiles && errFiles[0];
+    if (file) {
+      file.upload = Upload.upload({
+          url: '/upload',
+          headers: {
+            'Csrf-Token': csrfToken
+          },
+          data: {file: file}
+      });
+
+      file.upload.then(function (response) {
+          $timeout(function () {
+            console.log("success");
+            file.result = response.data;
+          });
+      }, function (response) {
+          if (response.status > 0) {
+            console.log("error");
+            $scope.errorMsg = response.status + ': ' + response.data;
+          }
+      });
+    }
+  }
 
   /** handle incoming messages: add to messages array */
   $scope.addMsg = function (msg) {

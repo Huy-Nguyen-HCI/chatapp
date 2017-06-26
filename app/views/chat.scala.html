@@ -70,8 +70,9 @@
                 <div class="write">
                     <form enctype="multipart/form-data">
                         <div class="file-upload-container">
-                            <input type="file" multiple id="fileInput" name="fileInput"
-                                  onchange="submitUploadForm()" />
+                            <!--<input type="file" multiple id="fileInput" name="fileInput"-->
+                                  <!--onchange="submitUploadForm()" />-->
+                            <button type="file" id="fileInput" ngf-select="uploadFiles($file, $invalidFiles)" multiple></button>
                         </div>
                     </form>
                     <a class="write-link attach" href="#" onclick="selectFile()"></a>
@@ -91,8 +92,10 @@
 <!-- libraries -->
 <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.min.js")'></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
-<script src='@routes.Assets.versioned("javascripts/lib/eventsource.js")'></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/eventsource.js")'></script>
+<script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/ng-file-upload.min.js")'></script>
+<script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/ng-file-upload-shim.min.js")'></script>
 <script type='text/javascript' src='@routes.Assets.versioned("lib/flot/jquery.flot.js")'></script>
 <script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/notify.min.js")'></script>
 

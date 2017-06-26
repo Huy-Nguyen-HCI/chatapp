@@ -78,10 +78,10 @@ class FileController @Inject() (implicit val messagesApi: MessagesApi) extends C
     val fileOption = request.body.file("file").map {
       case FilePart(key, fileName, contentType, file) =>
         logger.info(s"key = ${key}, filename = ${fileName}, contentType = ${contentType}, file = $file")
+        println("uploaded " + fileName)
         val data = operateOnTempFile(file, fileName)
         data
     }
-
     Ok(s"file size = ${fileOption.getOrElse("no file")}")
   }
 
