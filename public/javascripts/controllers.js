@@ -7,34 +7,6 @@ angular
   .controller('ChatCtrl', ['$scope', '$http', 'chatModel', 'Upload', '$timeout',
   function ($scope, $http, chatModel, Upload, $timeout) {
 
-  angular.element(document).ready(function () {
-    // $('.chat[data-chat=room1]').addClass('active-chat');
-    // $('.person[data-chat=room1]').addClass('active');
-    // $('.left .person').mousedown(function(){
-    //   if ($(this).hasClass('.active')) {
-    //     return false;
-    //   } else {
-    //     var findChat = $(this).attr('data-chat');
-    //     var personName = $(this).find('.name').text();
-    //     $('.right .top .name').html(personName);
-    //     $('.chat').removeClass('active-chat');
-    //     $('.left .person').removeClass('active');
-    //     $(this).addClass('active');
-    //     $('.chat[data-chat = '+findChat+']').addClass('active-chat');
-    //   }
-    // });
-
-    // tell MathJax to recognize inline math by $ $
-    // MathJax.Hub.Config({
-    //     tex2jax: {inlineMath: [["$","$"]]}
-    // });
-    //
-    // $('#fileInput').onchange = function() {
-    //     console.log("changed");
-    //     $(this).closest('form').submit();
-    // }
-  });
-
   $scope.rooms = chatModel.getRooms();
   $scope.msgs = [];
   $scope.inputText = "";

@@ -24,7 +24,7 @@
             <nav class="navbar navbar-inverse">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <a class="navbar-brand" href="#">StudentChat</a>
+                        <a class="navbar-brand">Hello @request.session.get("connected")</a>
                     </div>
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Chat</a></li>
@@ -138,28 +138,44 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="chat-area">
+                        <div class="chat-area" ng-repeat="r in rooms" data-chat="room{{$index+1}}">
                             <ul class="list-unstyled" id="chat-list">
-                                <li class="left clearfix">
+                                <li class="left clearfix {{msg.who}}" ng-repeat="msg in msgs">
                                     <span class="chat-img1 pull-left">
-                                        <img src="https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg" alt="User Avatar" class="img-circle">
+                                        <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg"
+                                        alt="User Avatar" class="img-circle">
                                     </span>
                                     <div class="chat-body1 clearfix">
-                                        <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia.</p>
-                                        <div class="chat_time pull-right">09:40PM</div>
+                                        <p ng-if="msg.link">
+                                            <a href="{{msg.link}}">{{msg.fileName}}</a>
+                                        </p>
+                                        <p ng-if="msg.text">
+                                            {{msg.text}}
+                                        </p>
+                                        <div class="chat-time pull-right">09:40PM</div>
                                     </div>
                                 </li>
+                            </ul>
                         </div>
                         <div class="message-write">
                             <div class="checkbox pull-left">
                                 <label><input type="checkbox" id="typeMath">Type math</label>
                             </div>
-                            <a href="#" class="pull-right btn btn-primary disabled">
-                                <i class="fa fa-cloud-upload" aria-hidden="true"></i>Add Files
-                            </a>
+                            <form enctype="multipart/form-data">
+                                <button class="pull-right btn btn-primary" type="file"
+                                ngf-select="uploadFiles($file, $invalidFiles)" multiple>
+                                    <i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files
+                                </button>
+                            </form>
                             <div id="input-area">
-                                <textarea class="form-control" placeholder="type a message" id="input-box"></textarea>
-                                <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level"></div>
+                                <form ng-submit="submitMsg()">
+                                    <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
+                                    <input type="text" name="chat" ng-model="inputText"
+                                    class="form-control ng-pristine ng-valid input-block-level"
+                                    placeholder="Type a message" id="input-box">
+                                    <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
