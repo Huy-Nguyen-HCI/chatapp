@@ -29,7 +29,7 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
   )
 
   def index = Action { implicit request =>
-    request.session.get("connected") match {
+    request.session.get(USERNAME_KEY) match {
       case None => Ok(views.html.login(userForm))
       case Some(username) => Redirect(routes.ChatApplication.index())
     }
@@ -49,7 +49,7 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
         val query = userDao.findByUsername(username)
         query map {
           case Some(user) if password.isBcrypted(user.password) =>
-            Redirect("/").withSession("connected" -> username)
+            Redirect("/").withSession(USERNAME_KEY -> username)
 
           case _ =>
             val formWithErrors = userForm.withGlobalError("incorrect username or password")

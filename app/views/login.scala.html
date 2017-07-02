@@ -21,16 +21,16 @@
     <div class="row login-form">
         <div class="col-lg-3"></div>
         <div class="col-lg-6">
-                @form(action = routes.LoginController.login()) {
-                    @CSRF.formField
-                    <div class="form-group">
-                        @inputText(myForm("username"), '_label -> "Username", 'class -> "form-control")
-                    </div>
-                    <div class="form-group">
-                        @inputPassword(myForm("password"), '_label -> "Password", 'class -> "form-control")
-                    </div>
-                    <input type="submit" class="btn btn-primary btn-lg btn-block">
-                }
+            @form(action = routes.LoginController.login()) {
+                @CSRF.formField
+                <div class="form-group">
+                    @inputText(myForm("username"), '_label -> "Username", 'class -> "form-control")
+                </div>
+                <div class="form-group">
+                    @inputPassword(myForm("password"), '_label -> "Password", 'class -> "form-control")
+                </div>
+                <input type="submit" class="btn btn-primary btn-lg btn-block">
+            }
         </div>
     </div>
 }

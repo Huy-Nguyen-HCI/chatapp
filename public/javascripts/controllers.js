@@ -64,7 +64,7 @@ angular
         time: (new Date()).toUTCString(),
         room: $scope.currentRoom.value,
       }
-    }
+    };
     $http(req);
     $scope.inputText = "";
   };
@@ -82,9 +82,9 @@ angular
         fileName: fileName,
         user: $scope.user,
         time: (new Date()).toUTCString(),
-        room: $scope.currentRoom.value,
+        room: $scope.currentRoom.value
       }
-    }
+    };
     $http(req);
     $scope.inputText = "";
   };
@@ -115,7 +115,7 @@ angular
           }
       });
     }
-  }
+  };
 
   /** handle incoming messages: add to messages array */
   $scope.addMsg = function (msg) {

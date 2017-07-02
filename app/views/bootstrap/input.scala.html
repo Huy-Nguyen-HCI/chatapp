@@ -6,6 +6,6 @@
     <small><span class="help-inline">@elements.infos.mkString(", ")</span></small>
     }
     @if(elements.hasErrors) {
-    <div class="error">@elements.errors(0)</div>
+    <div class="error">@elements.errors.head</div>
     }
 </div>
