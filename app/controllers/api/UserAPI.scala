@@ -19,11 +19,12 @@ class UserAPI @Inject() (userDao: UserDao)(implicit executionContext: ExecutionC
 
   private val ignore = OWrites[Any](_ => Json.obj())
 
+  // only display necessary information
   implicit val userWrites: Writes[User] = (
-    (JsPath \ "id").writeNullable[Long] and
+    ignore and
     (JsPath \ "username").write[String] and
     ignore and
-    (JsPath \ "email").write[String]
+    ignore
   )(unlift(User.unapply))
 
 
@@ -32,5 +33,12 @@ class UserAPI @Inject() (userDao: UserDao)(implicit executionContext: ExecutionC
       case Some(user) => Ok(Json.toJson(user))
       case None => NotFound
     }
+  }
+
+  /*
+   * Get the list of all users
+   */
+  def list = Action.async {
+    userDao.list.map { res => Ok(Json.toJson(res)) }
   }
 }

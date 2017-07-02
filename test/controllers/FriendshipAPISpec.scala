@@ -88,7 +88,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
       // not process request that is not authenticated
       json = """{"sender":"bob", "receiver":"ann"}"""
 
-      result = apiPostRequest(apiUrl, json)
+      result = apiPostRequest(apiUrl, json, "random_guy")
       status(result) mustBe UNAUTHORIZED
     }
 

@@ -64,7 +64,7 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
   }
 
   /*
-   * Action composition that authenticates POST request to the API
+   * Action composition that authenticates HTTP request
    */
   case class Authenticated(action: Action[JsValue]) extends Action[JsValue] {
 

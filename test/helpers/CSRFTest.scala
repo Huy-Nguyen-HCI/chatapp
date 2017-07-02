@@ -14,7 +14,7 @@ trait CSRFTest {
     val token          = csrfFilter.tokenProvider.generateToken
 
     fakeRequest
-      .withHeaders((csrfConfig.headerName, token))
+      .withHeaders(csrfConfig.headerName -> token)
       .withSession(csrfConfig.tokenName -> token)
   }
 }
