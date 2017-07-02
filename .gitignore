@@ -7,4 +7,4 @@ target
 /.settings
 /RUNNING_PID
 *.db
-node_modules
+node_modules.env
