@@ -1,18 +1,81 @@
-// send friend request to other user
-$('.left .top .add').on('click', function() {
-  var jsonData = {sender: "thang", receiver: "pucca"};
-  var csrfToken = $("#csrfToken").attr("value");
-  $.ajax({
-    method: 'post',
-    url: '/api/friend/add',
-    headers: {'Csrf-Token': csrfToken, 'Content-Type': 'application/json'},
-    dataType: 'json',
-    data: JSON.stringify(jsonData),
-  });
+$(document).ready(function() {
+    $('#mathquill').hide();
+    closeKeyboard();
+    setupMathInput();
+
+    $('#typeMath').change( function() {
+        if (this.checked) {
+            $('#mathquill').show();
+            $('#input-box').hide();
+        }
+        else {
+            $('#mathquill').hide();
+            $('#input-box').show();
+            closeKeyboard();
+        }
+    });
 });
 
+function setupMathInput() {
+    // math input configuration
+    var isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
+    var MQElement = document.getElementById("mathquill");
 
-// trigger file upload selection
-function selectFile() {
-  $('#fileInput').click();
+    var MQ = MathQuill.getInterface(2); // for backcompat
+
+    var mathField = MQ.MathField(MQElement, {});
+
+    $('#keyboard .key').click( function(event) {
+        event.preventDefault();
+
+        if (mathField)  {
+            if ($(this).data('action') == 'write') {
+                mathField.write($(this).data('content'));
+            } else if($(this).data('action') == 'cmd') {
+                mathField.cmd($(this).data('content'));
+            } else if($(this).data('action') == 'keystroke') {
+                mathField.keystroke($(this).data('content'));
+            } else if($(this).data('action') == 'switch-keys') {
+                $(this).parents('#keyboard').switchClass("trig", $(this).data("content"));
+                $(this).parents('#keyboard').switchClass("std", $(this).data("content"));
+            } else if($(this).data('action') == 'keyboard-hide'){
+                closeKeyboard();
+            }
+
+            if (typeof $(this).data('stepback') !== 'undefined') {
+                for (var i = 0; i < parseInt($(this).data('stepback')); i++) {
+                    mathField.keystroke('Left');
+                }
+            }
+
+            if (typeof $(this).data('stepforward') !== 'undefined') {
+                for (var i = 0; i < parseInt($(this).data('stepforward')); i++) {
+                    mathField.keystroke('Right');
+                }
+            }
+
+            mathField.focus();
+        }
+    });
+
+
+    $('#mathquill').click(function(e) {
+        setTimeout(function() {
+            openKeyboard();
+        }, 100);
+    });
+
+    $('#keyboard-mask').height($('#keyboard-wrapper').height());
+}
+
+function closeKeyboard() {
+    $('#keyboard-mask').slideUp();
+    $('#keyboard-wrapper').slideUp();
+}
+
+function openKeyboard() {
+    $('#keyboard-wrapper').slideDown();
+    $('#keyboard-mask').slideDown("fast", function() {
+        $(window).scrollTop($('#keyboard-mask').position().top + $('#keyboard-mask').outerHeight() + 30);
+    });
 }
