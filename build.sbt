@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "angularjs" % "2.0.0-alpha.22"
 )
 
-herokuAppName in Compile := "morning-headland-89121"
+herokuAppName in Compile := "student-chat-app"
 
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 

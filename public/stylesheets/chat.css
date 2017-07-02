@@ -9,6 +9,30 @@ html, body {
 .navbar {
   margin-bottom: 0px;
 }
+.dropdown-menu li {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  text-align: left;
+  height: 80px;
+  min-width: 300px;
+  z-index: 1;
+}
+.dropdown-menu li img {
+  width: 40px;
+  height: 40px;
+  float: left;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+.dropdown-menu li button {
+  float: right;
+  width: 20px;
+}
+.dropdown-menu li:hover {
+  background-color: #f1f1f1;
+}
+
 #custom-search-input {
   background: #e8e6e7 none repeat scroll 0 0;
   margin: 0;
@@ -162,6 +186,10 @@ html, body {
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
+  display: none;
+}
+.chat-area.active-chat {
+  display: block;
 }
 .chat-area li {
   padding: 14px 14px 0;
@@ -191,7 +219,7 @@ html, body {
   width: 100%;
 }
 
-.message-write textarea.form-control {
+.message-write input.form-control {
   padding: 10px;
   height: 40px;
 }
@@ -207,10 +235,13 @@ html, body {
   float: left;
   width:100%;
 }
-.member-list li:hover {
+.member-list li:hover, .member-list li.active {
   background: #428bca none repeat scroll 0 0;
   color: #fff;
   cursor:pointer;
+}
+.member-list li:hover:after, .member-list li.active:after {
+  display: none;
 }
 
 #mathquill {
@@ -220,23 +251,18 @@ html, body {
   text-align: center;
   font-size: 24px;
 }
-
-
 .ui-keyboard-frac span {
   background-image: url(https://cloud.githubusercontent.com/assets/2561440/12258775/26781542-b937-11e5-88b9-4a0b926dc8c0.png);
   background-position: -10px -5px;
   text-indent: -99em;
   width: 1.2em;
 }
-
 .ui-keyboard-sqrt span {
   background-image: url(https://cloud.githubusercontent.com/assets/2561440/12258775/26781542-b937-11e5-88b9-4a0b926dc8c0.png);
   background-position: -203px -5px;
   text-indent: -99em;
   width: 1.2em;
 }
-
-
 #keyboard-wrapper {
   margin: 0;
   list-style: none;
@@ -249,7 +275,6 @@ html, body {
   bottom: 0;
   display: none;
 }
-
 #keyboard {
   margin: 0;
   padding: 0;
@@ -258,7 +283,6 @@ html, body {
   max-width: 900px;
   text-align: center
 }
-
 #keyboard .key {
   line-height: 40px;
   text-align: center;
@@ -271,13 +295,11 @@ html, body {
   display: table-cell;
   vertical-align: middle;
 }
-
 #keyboard.mobile .key {
   width:40px;
   height:40px;
   float:left;
 }
-
 .capslock, .tab, .left-shift {
   clear: left;
 }
@@ -302,7 +324,6 @@ html, body {
   text-align: center;
   padding: 7px;
 }
-
 .lastitem {
   margin-right: 0;
 }
@@ -310,16 +331,13 @@ html, body {
 .uppercase {
   text-transform: uppercase;
 }
-
 #keyboard .space {
   clear: left;
   max-width: 700px;
 }
-
 .on {
   display: none;
 }
-
 #keyboard .key:hover {
   position: relative;
   top: 1px;
@@ -327,42 +345,32 @@ html, body {
   border-color: #e5e5e5;
   cursor: pointer;
 }
-
 #keyboard .material-icons {
   vertical-align: middle;
 }
-
 #keyboard .keypad:not(.default) {
   display: none;
 }
-
 #keyboard.std .keypad.std {
   display: block;
 }
-
 #keyboard.trig .keypad.trig {
   display: block;
 }
-
 #keyboard.std .keypad.trig {
   display: none;
 }
-
 #keyboard.trig .keypad.std {
   display: none;
 }
-
-
 #keyboard .key.col-xs-4.special2 {
   background: #5482a9 !important;
   color: white !important;
 }
-
 #keyboard .key.col-xs-4.special {
   background: gray !important;
   color: white !important;
 }
-
 #mathquill {
   padding: 10px;
   text-align: center;
@@ -371,23 +379,17 @@ html, body {
   color: black;
   border-radius: 4px;
 }
-
 #keyboard-mask {
   height: 200px;
 }
-
-
 ul.errorlist.nonfield {
   list-style: none;
   padding: 0px;
 }
-
-
 .header.home {
   background: white !important;
   margin-bottom: 0px !important;
 }
-
 .splash {
   background: #025d9e;
   background-image: url(../img/sky.png);
@@ -397,21 +399,17 @@ ul.errorlist.nonfield {
   color: rgba(255,255,255,0.5);
   margin-bottom: 25px;
 }
-
 .splash h3 {
   color: white;
   font-size: 40px !important;
 }
-
 .splash p {
   color: rgba(255,255,255,0.5);
   font-size: 20px;
 }
-
 .mobile {
   display: none;
 }
-
 .desktop {
   display: none;
 }
@@ -432,7 +430,6 @@ ul.errorlist.nonfield {
     width: 100% !important;
   }
 }
-
 @media screen and (min-width: 760px) {
   .mobile {
     display: none;
@@ -454,11 +451,9 @@ ul.errorlist.nonfield {
 .WolframAlphaWidget {
   width: 100% !important;
 }
-
 .WolframAlphaWidget table {
   width: 100% !important;
 }
-
 .WolframAlphaWidget input {
   width: 100%;
   text-align: center;

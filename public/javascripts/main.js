@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    /* Set up math input */
     $('#mathquill').hide();
     closeKeyboard();
     setupMathInput();
@@ -13,6 +14,32 @@ $(document).ready(function() {
             $('#input-box').show();
             closeKeyboard();
         }
+    });
+
+    /* tell MathJax to recognize inline math by $ $ */
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [["$","$"]]}
+    });
+
+    /* Set chatroom switching */
+    $('.chat-area[data-chat=room1]').addClass('active-chat');
+    $('.member-list li[data-chat=room1]').addClass('active');
+    $('.member-list li').mousedown(function(){
+        if ($(this).hasClass('.active')) {
+            return false;
+        } else {
+            var findChat = $(this).attr('data-chat');
+            $('.chat-area').removeClass('active-chat');
+            $('.member-list li').removeClass('active');
+            $(this).addClass('active');
+            $('.chat-area[data-chat = '+findChat+']').addClass('active-chat');
+        }
+    });
+
+    /* File upload */
+    $('#fileInput').on("click", function () {
+        console.log("changed");
+        $(this).closest('form').submit();
     });
 });
 

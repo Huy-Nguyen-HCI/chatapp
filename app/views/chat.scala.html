@@ -24,7 +24,7 @@
             <nav class="navbar navbar-inverse">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <a class="navbar-brand" href="#">StudentChat</a>
+                        <a class="navbar-brand">Hello @request.session.get("connected")</a>
                     </div>
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Chat</a></li>
@@ -34,15 +34,21 @@
                             <ul class="dropdown-menu">
                                 <li>
                                     <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
-                                    <div class="right">LMT has sent you a friend request.</div>
+                                    <p>LMT has sent you a friend request</p>
+                                    <i class="fa fa-check-circle-o fa-2x" aria-hidden="true"></i>
+                                    <i class="fa fa-times-circle-o fa-2x" aria-hidden="true"></i>
                                 </li>
                                 <li>
                                     <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
-                                    <div class="right">LMT ran away.</div>
+                                    <p>LMT ran away.</p>
+                                    <i class="fa fa-check-circle-o fa-2x" aria-hidden="true"></i>
+                                    <i class="fa fa-times-circle-o fa-2x" aria-hidden="true"></i>
                                 </li>
                                 <li>
                                     <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
-                                    <div class="right">A wild LMT appears!</div>
+                                    <p>A wild LMT appears!</p>
+                                    <i class="fa fa-check-circle-o fa-2x" aria-hidden="true"></i>
+                                    <i class="fa fa-times-circle-o fa-2x" aria-hidden="true"></i>
                                 </li>
                             </ul>
                         </li>
@@ -55,10 +61,11 @@
                                     <i class="glyphicon glyphicon-search"></i>
                                 </button>
                             </div>
+                            <input type="text" class="form-control" placeholder="Search">
                         </div>
                     </form>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span>Log out</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
                     </ul>
                 </div>
             </nav>
@@ -68,9 +75,9 @@
                         <div id="custom-search-input">
                             <div class="input-group col-md-12">
                                 <input type="text" class="search-query form-control" placeholder="Search"/>
-                                <button class="btn btn-danger" type="button">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
+                                @*<button class="btn btn-danger" type="button">*@
+                                    @*<span class="glyphicon glyphicon-search"></span>*@
+                                @*</button>*@
                             </div>
                         </div>
                         <div class="dropdown all-conversation">
@@ -138,28 +145,44 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="chat-area">
+                        <div class="chat-area" ng-repeat="r in rooms" data-chat="room{{$index+1}}">
                             <ul class="list-unstyled" id="chat-list">
-                                <li class="left clearfix">
+                                <li class="left clearfix {{msg.who}}" ng-repeat="msg in msgs">
                                     <span class="chat-img1 pull-left">
-                                        <img src="https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg" alt="User Avatar" class="img-circle">
+                                        <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg"
+                                        alt="User Avatar" class="img-circle">
                                     </span>
                                     <div class="chat-body1 clearfix">
-                                        <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia.</p>
-                                        <div class="chat_time pull-right">09:40PM</div>
+                                        <p ng-if="msg.link">
+                                            <a href="{{msg.link}}">{{msg.fileName}}</a>
+                                        </p>
+                                        <p ng-if="msg.text">
+                                            {{msg.text}}
+                                        </p>
+                                        <div class="chat-time pull-right">09:40PM</div>
                                     </div>
                                 </li>
+                            </ul>
                         </div>
                         <div class="message-write">
                             <div class="checkbox pull-left">
                                 <label><input type="checkbox" id="typeMath">Type math</label>
                             </div>
-                            <a href="#" class="pull-right btn btn-primary disabled">
-                                <i class="fa fa-cloud-upload" aria-hidden="true"></i>Add Files
-                            </a>
+                            <form enctype="multipart/form-data">
+                                <button class="pull-right btn btn-primary" type="file"
+                                ngf-select="uploadFiles($file, $invalidFiles)" multiple>
+                                    <i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files
+                                </button>
+                            </form>
                             <div id="input-area">
-                                <textarea class="form-control" placeholder="type a message" id="input-box"></textarea>
-                                <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level"></div>
+                                <form ng-submit="submitMsg()">
+                                    <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
+                                    <input type="text" name="chat" ng-model="inputText"
+                                    class="form-control ng-pristine ng-valid input-block-level"
+                                    placeholder="Type a message" id="input-box">
+                                    <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -167,78 +190,7 @@
             </div>
         </div>
     </div>
-    <!--
-<div ng-controller="ChatCtrl">
-    <div class="wrapper">
-        <div class="container">
-            <div class="left">
-                <div class="top">
-                    <input type="text" />
-                    <button class="add"></button>
-                </div>
-                <ul class="people">
-                    <li class="person" ng-repeat="r in rooms" data-chat="room{{$index+1}}"
-                            ng-click="setCurrentRoom(r)">
-                        <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="" />
-                        <span class="name">LMT</span>
-                        <span class="time">11:54 PM</span>
-                        <span class="preview">I've forgotten how it felt before</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="right">
-                <div class="top"><span>To: <span class="name">Dog Woofson</span></span></div>
-                <div class="chat" ng-repeat="r in rooms" data-chat="room{{$index+1}}">
-                    <div class="conversation-start">
-                        <span>Today, 5:38 PM</span>
-                    </div>
-                    <div class="bubble you {{msg.who}} msg" ng-repeat="msg in msgs">
-                        <div ng-if="msg.link">
-                            <a href="{{msg.link}}">{{msg.fileName}}</a>
-                        </div>
-                        <div ng-if="msg.text">
-                            {{msg.text}}
-                        </div>
-                        <br/>
-                    </div>
-                </div>
-                <div class="write">
-                    <div id="text-input-area">
-                        <form enctype="multipart/form-data">
-                            <div class="file-upload-container">
-                                <button type="file" id="fileInput" ngf-select="uploadFiles($file, $invalidFiles)" multiple></button>
-                            </div>
-                        </form>
-                        <a class="write-link attach" href="#" onclick="selectFile()"></a>
-                        <form ng-submit="submitMsg()">
-                            <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
-                            <input type="text" name="chat" id="input-box" ng-model="inputText"
-                                   placeholder="Say something" class="ng-pristine ng-valid input-block-level" />
-                        </form>
-                        <a class="write-link smiley"></a>
-                        <a class="write-link send"></a>
-                    </div>
-                    <div id="math-input-area">
-                        <form ng-submit="submitMathMsg()">
-                            <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
-                            <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level"></div>
-                        </form>
-                    </div>
-                </div>
-                <div class="add-on">
-                    <div class="component pull-left">
-                        <input type="checkbox" id="type-math">
-                        <i class="fa fa-usd"></i>
-                    </div>
-                    <div class="component pull-right">
-                        <i class="fa fa-picture-o"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-    -->
+
 @keyboard()
     <!-- External libraries -->
     <script src="https://use.fontawesome.com/baccb63e5b.js"></script>
