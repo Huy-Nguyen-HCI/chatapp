@@ -1,7 +1,14 @@
 $(document).ready(function() {
+
+    /* Make chat area responsive to window height */
+    var height =
+        window.innerHeight - parseFloat($('.navbar').height()) -
+        parseFloat($('.message-write').height()) - parseFloat($('.new-message-head').height()) - 50;
+
+    $('.chat-area').css('height', height + 'px');
+
     /* Set up math input */
     $('#mathquill').hide();
-    //$('#input-box').hide();
     closeKeyboard();
     setupMathInput();
 
