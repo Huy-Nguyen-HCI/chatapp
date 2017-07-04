@@ -1,17 +1,18 @@
 $(document).ready(function() {
     /* Set up math input */
     $('#mathquill').hide();
+    //$('#input-box').hide();
     closeKeyboard();
     setupMathInput();
 
     $('#typeMath').change( function() {
         if (this.checked) {
-            $('#mathquill').show();
+            $('#mathquill').css('display', 'inline-block');
             $('#input-box').hide();
         }
         else {
             $('#mathquill').hide();
-            $('#input-box').show();
+            $('#input-box').css('display', 'inline-block');
             closeKeyboard();
         }
     });

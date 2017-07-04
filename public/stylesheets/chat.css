@@ -250,6 +250,7 @@ html, body {
   border-radius: 5px;
   text-align: center;
   font-size: 24px;
+  padding: 10px;
 }
 .ui-keyboard-frac span {
   background-image: url(https://cloud.githubusercontent.com/assets/2561440/12258775/26781542-b937-11e5-88b9-4a0b926dc8c0.png);
