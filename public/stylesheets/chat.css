@@ -8,6 +8,7 @@ html, body {
 }
 .navbar {
   margin-bottom: 0px;
+  height: 52px;
 }
 .dropdown-menu li {
   color: black;
@@ -37,7 +38,7 @@ html, body {
   background: #e8e6e7 none repeat scroll 0 0;
   margin: 0;
   padding: 10px;
-  height: 59px;
+  height: 60px;
 }
 #custom-search-input .search-query {
   background: #fff none repeat scroll 0 0 !important;
@@ -58,7 +59,7 @@ html, body {
   padding: 2px 5px;
   position: absolute;
   right: 0;
-  z-index: 9999;
+  z-index: 100;
 }
 .search-query:focus + button {
   z-index: 3;
@@ -172,6 +173,7 @@ html, body {
   font-weight: 600;
   padding: 18px 10px;
   width: 100%;
+  height: 60px;
 }
 .message-section {
   border: 1px solid #dddddd;
@@ -250,6 +252,7 @@ html, body {
   border-radius: 5px;
   text-align: center;
   font-size: 24px;
+  padding: 10px;
 }
 .ui-keyboard-frac span {
   background-image: url(https://cloud.githubusercontent.com/assets/2561440/12258775/26781542-b937-11e5-88b9-4a0b926dc8c0.png);

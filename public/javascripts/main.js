@@ -1,4 +1,12 @@
 $(document).ready(function() {
+
+    /* Make chat area responsive to window height */
+    var height =
+        window.innerHeight - parseFloat($('.navbar').height()) -
+        parseFloat($('.message-write').height()) - parseFloat($('.new-message-head').height()) - 50;
+
+    $('.chat-area').css('height', height + 'px');
+
     /* Set up math input */
     $('#mathquill').hide();
     closeKeyboard();
@@ -6,12 +14,12 @@ $(document).ready(function() {
 
     $('#typeMath').change( function() {
         if (this.checked) {
-            $('#mathquill').show();
+            $('#mathquill').css('display', 'inline-block');
             $('#input-box').hide();
         }
         else {
             $('#mathquill').hide();
-            $('#input-box').show();
+            $('#input-box').css('display', 'inline-block');
             closeKeyboard();
         }
     });
