@@ -18,8 +18,8 @@ POST    /chat                       controllers.ChatApplication.postMessage
 
 POST    /upload                     controllers.FileController.upload
 
-GET     /api/user/find/:name        controllers.api.UserAPI.findByUsername(name: String)
-GET     /api/user/all               controllers.api.UserAPI.list
+GET     /api/users/:name            controllers.api.UserAPI.findByUsername(name: String)
+GET     /api/users                  controllers.api.UserAPI.list
 
 POST    /api/friend/add             controllers.api.FriendshipAPI.sendFriendRequest
 POST    /api/friend/accept          controllers.api.FriendshipAPI.acceptFriendRequest

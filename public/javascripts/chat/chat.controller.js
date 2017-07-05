@@ -4,14 +4,22 @@
 
 angular
   .module('chat')
-  .controller('ChatCtrl', ['$scope', '$http', 'chatModel', 'Upload', '$timeout',
-    function ($scope, $http, chatModel, Upload, $timeout) {
+  .controller('ChatCtrl', ['$scope', '$http', 'chatModel', 'Upload', '$timeout', 'Users',
+    function ($scope, $http, chatModel, Upload, $timeout, Users) {
 
       $scope.rooms = chatModel.getRooms();
+      $scope.currentRoom = $scope.rooms[0];
       $scope.msgs = [];
       $scope.inputText = "";
       $scope.user = "Jane Doe #" + Math.floor((Math.random() * 100) + 1);
-      $scope.currentRoom = $scope.rooms[0];
+      $scope.userList = Users.query();
+
+      // comparator function that checks whether the actual string starts with the
+      // expected expression
+      $scope.startsWith = function (actual, expected) {
+        var lowercaseExpected = expected.toLowerCase();
+        return (actual.indexOf(lowercaseExpected) === 0);
+      };
 
       /** change current room, restart EventSource connection */
       $scope.setCurrentRoom = function (room) {
@@ -34,7 +42,7 @@ angular
             text: $scope.inputText,
             user: $scope.user,
             time: (new Date()).toUTCString(),
-            room: $scope.currentRoom.value,
+            room: $scope.currentRoom.value
           }
         };
         $http(req);

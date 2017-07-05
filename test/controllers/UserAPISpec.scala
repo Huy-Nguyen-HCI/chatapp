@@ -45,7 +45,7 @@ class UserAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter 
     "give user by user name" in {
       Await.result(userDao.insert(User(None, "test", "test", "test@gmail.com")), Duration.Inf)
 
-      val request = FakeRequest(GET_REQUEST, "/api/user/test").withHeaders("Host" -> "localhost")
+      val request = FakeRequest(GET_REQUEST, "/api/users/test").withHeaders("Host" -> "localhost")
       val result = route(app, request).get
 
       status(result) mustEqual OK
@@ -55,7 +55,7 @@ class UserAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter 
       val jsonContent = contentAsJson(result)
       (jsonContent \ "username").as[String] mustEqual "test"
       (jsonContent \ "password") mustBe a [JsUndefined]
-      (jsonContent \ "email").as[String] mustEqual "test@gmail.com"
+      (jsonContent \ "email") mustBe a [JsUndefined]
     }
   }
 }

@@ -36,9 +36,9 @@ class UserAPI @Inject() (userDao: UserDao)(implicit executionContext: ExecutionC
   }
 
   /*
-   * Get the list of all users
+   * Get the list of all usernames
    */
   def list = Action.async {
-    userDao.list.map { res => Ok(Json.toJson(res)) }
+    userDao.list.map { res => Ok(Json.toJson(res.map(user => user.username))) }
   }
 }
