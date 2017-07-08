@@ -182,9 +182,10 @@
                                     <input type="text" name="chat" ng-model="inputText"
                                     class="form-control ng-pristine ng-valid input-block-level"
                                     placeholder="Type a message" id="input-box">
-                                    <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
-                                    </div>
                                 </form>
+                                <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
+                                </div>
+                                <button id="mathquill-submit" ng-click="submitMath()"></button>
                             </div>
                         </div>
                     </div>
@@ -197,6 +198,7 @@
     <!-- External libraries -->
     <script src="https://use.fontawesome.com/baccb63e5b.js"></script>
     <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.min.js")'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.js"></script>
     <script type='text/javascript' src='@routes.Assets.versioned("lib/bootstrap/dist/js/bootstrap.min.js")'></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
     <script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/eventsource.js")'></script>
@@ -204,7 +206,6 @@
     <script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/ng-file-upload.min.js")'></script>
     <script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/ng-file-upload-shim.min.js")'></script>
     <script type='text/javascript' src='@routes.Assets.versioned("javascripts/lib/notify.min.js")'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/virtual-keyboard/1.26.18/js/jquery.keyboard.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.0-rc.2/jquery-ui.min.js"></script>
 

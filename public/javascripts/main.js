@@ -1,28 +1,43 @@
-$(document).ready(function() {
+function init() {
 
     /* Make chat area responsive to window height */
     var height =
         window.innerHeight - parseFloat($('.navbar').height()) -
         parseFloat($('.message-write').height()) - parseFloat($('.new-message-head').height()) - 50;
-
     $('.chat-area').css('height', height + 'px');
 
+    var mathInputBox = $('#mathquill');
+    var textInputBox = $('#input-box');
+
     /* Set up math input */
-    $('#mathquill').hide();
+    mathInputBox.hide();
     closeKeyboard();
-    setupMathInput();
 
     $('#typeMath').change( function() {
         if (this.checked) {
-            $('#mathquill').css('display', 'inline-block');
-            $('#input-box').hide();
+            mathInputBox.css('display', 'inline-block');
+            textInputBox.hide();
         }
         else {
-            $('#mathquill').hide();
-            $('#input-box').css('display', 'inline-block');
+            mathInputBox.hide();
+            textInputBox.css('display', 'inline-block');
             closeKeyboard();
         }
     });
+
+    mathInputBox.click(function (e) {
+        setTimeout(function() {
+            openKeyboard();
+        }, 100);
+    });
+
+    mathInputBox.keypress(function (e) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+            e.preventDefault();
+            $('#mathquill-submit').click();
+        }
+    })
 
     /* tell MathJax to recognize inline math by $ $ */
     MathJax.Hub.Config({
@@ -43,23 +58,17 @@ $(document).ready(function() {
             $('.chat-area[data-chat = '+findChat+']').addClass('active-chat');
         }
     });
+    
+    
 
     /* File upload */
     $('#fileInput').on("click", function () {
         console.log("changed");
         $(this).closest('form').submit();
     });
-});
+}
 
-function setupMathInput() {
-    // math input configuration
-    var isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
-    var MQElement = document.getElementById("mathquill");
-
-    var MQ = MathQuill.getInterface(2); // for backcompat
-
-    var mathField = MQ.MathField(MQElement, {});
-
+function setupMathInput(mathField) {
     $('#keyboard .key').click( function(event) {
         event.preventDefault();
 
@@ -91,13 +100,6 @@ function setupMathInput() {
 
             mathField.focus();
         }
-    });
-
-
-    $('#mathquill').click(function(e) {
-        setTimeout(function() {
-            openKeyboard();
-        }, 100);
     });
 
     $('#keyboard-mask').height($('#keyboard-wrapper').height());

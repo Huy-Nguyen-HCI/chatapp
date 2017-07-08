@@ -13,6 +13,15 @@ angular
       $scope.inputText = "";
       $scope.user = "Jane Doe #" + Math.floor((Math.random() * 100) + 1);
       $scope.userList = Users.query();
+      $scope.csrfToken = $("#csrfToken").attr("value");
+
+      angular.element(document).ready(function () {
+        var MQElement = document.getElementById("mathquill");
+        var MQ = MathQuill.getInterface(2); // for backcompat
+        $scope.mathField = MQ.MathField(MQElement, {});
+        init();
+        setupMathInput($scope.mathField);
+      });
 
       // comparator function that checks whether the actual string starts with the
       // expected expression
@@ -29,14 +38,13 @@ angular
         $scope.listen();
       };
 
-      /** posting chat text to server */
+      /** posting chat text */
       $scope.submitMsg = function () {
-        var csrfToken = $("#csrfToken").attr("value");
         var req = {
           method: 'POST',
           url: '/chat',
           headers: {
-            'Csrf-Token': csrfToken
+            'Csrf-Token': $scope.csrfToken
           },
           data: {
             text: $scope.inputText,
@@ -49,36 +57,57 @@ angular
         $scope.inputText = "";
       };
 
-      $scope.displayFile = function(link, fileName) {
-        var csrfToken = $("#csrfToken").attr("value");
+      /** posting math formula */
+      $scope.submitMath = function() {
+        var mathInput = $scope.mathField.latex();
+        if (!mathInput || mathInput == '') {
+          return;
+        }
         var req = {
           method: 'POST',
           url: '/chat',
           headers: {
-            'Csrf-Token': csrfToken
+              'Csrf-Token': $scope.csrfToken
+          },
+          data: {
+              text: "$$" + mathInput + "$$",
+              user: $scope.user,
+              time: (new Date()).toUTCString(),
+              room: $scope.currentRoom.value
+          }
+        };
+        $http(req);
+        $scope.mathField.latex("");
+      };
+
+      $scope.displayFile = function(link, fileName) {
+        var req = {
+          method: 'POST',
+          url: '/chat',
+          headers: {
+            'Csrf-Token': $scope.csrfToken
           },
           data: {
             link: link,
             fileName: fileName,
             user: $scope.user,
             time: (new Date()).toUTCString(),
-            room: $scope.currentRoom.value,
+            room: $scope.currentRoom.value
           }
         };
         $http(req);
         $scope.inputText = "";
       };
 
-      /* upload file in chat */
+      /** upload file in chat */
       $scope.uploadFiles = function(file, errFiles) {
-        var csrfToken = $("#csrfToken").attr("value");
         $scope.f = file;
         $scope.errFile = errFiles && errFiles[0];
         if (file) {
           file.upload = Upload.upload({
             url: '/upload',
             headers: {
-              'Csrf-Token': csrfToken
+              'Csrf-Token': $scope.csrfToken
             },
             data: {file: file}
           });
