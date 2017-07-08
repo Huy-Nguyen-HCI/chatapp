@@ -30,7 +30,7 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
       for {
         s <- senderId
         r <- receiverId
-        friendship <- friendshipDao.checkFriendship(s, r)
+        friendship <- friendshipDao.getFriendship(s, r)
       } yield {
         // check if the sender is blocked by the receiver
         if (friendship.isDefined && friendship.get == (Friendship.STATUS_BLOCKED, r))
@@ -52,7 +52,7 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
       for {
         s <- senderId
         r <- receiverId
-        friendship <- friendshipDao.checkFriendship(s, r)
+        friendship <- friendshipDao.getFriendship(s, r)
       } yield {
         // check if there is actually a pending friend request from the receiver
         if (friendship.isDefined && friendship.get == (Friendship.STATUS_PENDING, r)) {

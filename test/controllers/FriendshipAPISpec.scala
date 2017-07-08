@@ -59,7 +59,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
         )
         .withJsonBody(Json.parse(json))
         .withHeaders(HOST -> "localhost")
-        .withSession("connected" -> username)
+        .withSession(USERNAME_KEY -> username)
       )
 
       route(app, request).get
@@ -75,7 +75,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
       status(result) mustEqual OK
 
       // check value in db
-      friendshipDAO.checkFriendship(1, 2).map { res =>
+      friendshipDAO.getFriendship(1, 2).map { res =>
         res.get mustEqual (Friendship.STATUS_PENDING, 1)
       }
 
@@ -103,7 +103,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
       status(result) mustBe OK
 
       // check value in db
-      friendshipDAO.checkFriendship(1, 2).map { res =>
+      friendshipDAO.getFriendship(1, 2).map { res =>
         res.get mustEqual (Friendship.STATUS_ACCEPTED, 2)
       }
 

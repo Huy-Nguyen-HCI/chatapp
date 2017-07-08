@@ -38,21 +38,23 @@ class FriendshipDao @Inject() (protected val dbConfigProvider: DatabaseConfigPro
     db.run(friendships.insertOrUpdate(friendship)).map(_ => ())
   }
 
-
-  def checkFriendship(id1: Long, id2: Long): Future[Option[(Int, Long)]] = {
+  // get the current friendship between two users with id1 and id2
+  def getFriendship(id1: Long, id2: Long): Future[Option[(Int, Long)]] = {
     // SELECT * FROM `friendship` WHERE `user_one_id` = 1 AND `user_two_id` = 2 AND `status` = 1
     val (first, second) = sortIds(id1, id2)
     val q = friendships.filter(f => f.id1 === first && f.id2 === second)
                        .map(res => (res.status, res.actionId))
-                       .result.headOption
-    db.run(q)
+    db.run(q.result.headOption)
   }
 
-
-  def getFriendships(id: Long): Future[Seq[Friendship]] = {
-    // SELECT * FROM `friendship` WHERE (`username1` = username OR `username2` = username) AND `status` = 1
-    db.run(friendships.filter(f => (f.id1 === id || f.id2 === id) && f.status === 1).result)
+  // get the ids of all users who is requesting friend to the user with this id
+  def getPendingRequests(id: Long): Future[Seq[Long]] = {
+    val q = friendships.filter(f =>
+      (f.id1 === id || f.id2 === id) && f.actionId =!= id && f.status === Friendship.STATUS_PENDING
+    ).map(f => Case If f.id1 =!= id Then f.id1 Else f.id2)
+    db.run(q.result)
   }
+
 
   /*
    * User table

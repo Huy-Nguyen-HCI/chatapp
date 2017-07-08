@@ -44,14 +44,14 @@ class FriendshipDAOSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInj
       // the ids are in correct order (first < second)
       await(friendshipDao.insertOrUpdateFriendship(1, 2, Friendship.STATUS_PENDING))
 
-      var res = await(friendshipDao.checkFriendship(1, 2)).get
+      var res = await(friendshipDao.getFriendship(1, 2)).get
       res._1 mustEqual Friendship.STATUS_PENDING
       res._2 mustEqual 1
 
       // the ids are not in correct order (first > second)
       await(friendshipDao.insertOrUpdateFriendship(3, 1, Friendship.STATUS_PENDING))
 
-      res = await(friendshipDao.checkFriendship(1, 3)).get
+      res = await(friendshipDao.getFriendship(1, 3)).get
       res._1 mustEqual Friendship.STATUS_PENDING
       res._2 mustEqual 3
     }
@@ -61,9 +61,18 @@ class FriendshipDAOSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInj
       await(friendshipDao.insertOrUpdateFriendship(1, 2, Friendship.STATUS_PENDING))
       await(friendshipDao.insertOrUpdateFriendship(2, 1, Friendship.STATUS_ACCEPTED))
 
-      val res = await(friendshipDao.checkFriendship(1, 2)).get
+      val res = await(friendshipDao.getFriendship(1, 2)).get
       res._1 mustEqual Friendship.STATUS_ACCEPTED
       res._2 mustEqual 2
+    }
+
+    "be able to get pending friend requests" in {
+      await(friendshipDao.insertOrUpdateFriendship(2, 1, Friendship.STATUS_PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(3, 1, Friendship.STATUS_PENDING))
+
+      val res = await(friendshipDao.getPendingRequests(1))
+
+      res must contain only (2, 3)
     }
 
   }
