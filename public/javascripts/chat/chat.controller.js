@@ -14,12 +14,16 @@ angular
       $scope.user = "Jane Doe #" + Math.floor((Math.random() * 100) + 1);
       $scope.userList = Users.query();
       $scope.csrfToken = $("#csrfToken").attr("value");
+      $scope.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
 
       angular.element(document).ready(function () {
-        var MQElement = document.getElementById("mathquill");
-        var MQ = MathQuill.getInterface(2); // for backcompat
-        $scope.mathField = MQ.MathField(MQElement, {});
+        // Initialize the UI
         init();
+
+        // Save the math input box to scope variable
+        var MQElement = document.getElementById("mathquill");
+        var MQ = MathQuill.getInterface(2);
+        $scope.mathField = MQ.MathField(MQElement, {});
         setupMathInput($scope.mathField);
       });
 
@@ -80,6 +84,16 @@ angular
         $scope.mathField.latex("");
       };
 
+      /** handle file upload */
+      $scope.showPicker = function() {
+        $scope.filePickerClient.pick({}).then(function (result) {
+          var files = result.filesUploaded;
+          for (var i = 0 ; i < files.length ; i++) {
+            $scope.displayFile(files[i].url, files[i].filename);
+          }
+        });
+      };
+
       $scope.displayFile = function(link, fileName) {
         var req = {
           method: 'POST',
@@ -97,33 +111,6 @@ angular
         };
         $http(req);
         $scope.inputText = "";
-      };
-
-      /** upload file in chat */
-      $scope.uploadFiles = function(file, errFiles) {
-        $scope.f = file;
-        $scope.errFile = errFiles && errFiles[0];
-        if (file) {
-          file.upload = Upload.upload({
-            url: '/upload',
-            headers: {
-              'Csrf-Token': $scope.csrfToken
-            },
-            data: {file: file}
-          });
-
-          file.upload.then(function (response) {
-            $timeout(function () {
-              file.result = response.data;
-              $scope.displayFile("/file-upload/" + file.name, file.name)
-            });
-          }, function (response) {
-            if (response.status > 0) {
-              console.log("error");
-              $scope.errorMsg = response.status + ': ' + response.data;
-            }
-          });
-        }
       };
 
       /** handle incoming messages: add to messages array */
