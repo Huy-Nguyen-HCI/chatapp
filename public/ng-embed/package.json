@@ -1,0 +1,103 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "ng-embed",
+        "scope": null,
+        "escapedName": "ng-embed",
+        "name": "ng-embed",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/HuyNguyen/Desktop/Work/lmt/chatapp"
+    ]
+  ],
+  "_from": "ng-embed@latest",
+  "_id": "ng-embed@2.2.0",
+  "_inCache": true,
+  "_location": "/ng-embed",
+  "_nodeVersion": "7.9.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/ng-embed-2.2.0.tgz_1498206256761_0.7571937870234251"
+  },
+  "_npmUser": {
+    "name": "ritz078",
+    "email": "rkritesh078@gmail.com"
+  },
+  "_npmVersion": "4.2.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "ng-embed",
+    "scope": null,
+    "escapedName": "ng-embed",
+    "name": "ng-embed",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/ng-embed/-/ng-embed-2.2.0.tgz",
+  "_shasum": "c9acb5d549e724ce05bf1f2a7837346c0472d3ac",
+  "_shrinkwrap": null,
+  "_spec": "ng-embed",
+  "_where": "/Users/HuyNguyen/Desktop/Work/lmt/chatapp",
+  "author": {
+    "name": "Ritesh Kumar",
+    "email": "rkritesh078@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/ritz078/ngEmbed/issues"
+  },
+  "dependencies": {
+    "angular": "^1.x",
+    "angular-sanitize": "^1.x"
+  },
+  "description": "An AngularJS filter to convert text into emoticons.",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-cli": "1.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-uglify": "^2.0.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "c9acb5d549e724ce05bf1f2a7837346c0472d3ac",
+    "tarball": "https://registry.npmjs.org/ng-embed/-/ng-embed-2.2.0.tgz"
+  },
+  "gitHead": "26ad4676341ee4a18afec9aa678467f6ab3c0b3b",
+  "homepage": "https://github.com/ritz078/ngEmbed",
+  "keywords": [
+    "emoticons",
+    "angular",
+    "ng-embed",
+    "smiley",
+    "smileys"
+  ],
+  "license": "MIT",
+  "main": "./src/ng-embed.js",
+  "maintainers": [
+    {
+      "name": "ritz078",
+      "email": "rkritesh078@gmail.com"
+    }
+  ],
+  "name": "ng-embed",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ritz078/ngEmoticons.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "2.2.0"
+}

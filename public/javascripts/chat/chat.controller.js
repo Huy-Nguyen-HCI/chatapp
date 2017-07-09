@@ -4,8 +4,8 @@
 
 angular
   .module('chat')
-  .controller('ChatCtrl', ['$scope', '$http', 'chatModel', 'Upload', '$timeout', 'Users',
-    function ($scope, $http, chatModel, Upload, $timeout, Users) {
+  .controller('ChatCtrl', ['$scope', '$http', 'chatModel', 'Users',
+    function ($scope, $http, chatModel, Users) {
 
       $scope.rooms = chatModel.getRooms();
       $scope.currentRoom = $scope.rooms[0];
