@@ -19,7 +19,9 @@
 </head>
 
 <body ng-app="sseChat">
-    <div class="main-section" ng-controller="ChatCtrl">
+    <div id="csrf-token" style="display: none;">@token.value</div>
+
+    <div class="main-section">
         <div class="container">
             <nav class="navbar navbar-inverse">
                 <div class="container-fluid">
@@ -72,123 +74,7 @@
                 </div>
             </nav>
             <div class="chat-container">
-                <div class="col-sm-3 char-sidebar">
-                    <div class="row">
-                        <div id="custom-search-input">
-                            <div class="input-group col-md-12">
-                                <input type="text" class="search-query form-control" placeholder="Search conversation"/>
-                                <button class="btn btn-danger" type="button">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="dropdown all-conversation">
-                            <button class="dropdown-toggle" type="button" id="dropdownMenu2"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-weixin" aria-hidden="true"></i>
-                                All Conversations
-                                <span class="caret pull-right"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                <li><a href="#"> All Conversation </a>  <ul class="sub-menu list-unstyled">
-                                    <li><a href="#"> All Conversation </a> </li>
-                                    <li><a href="#">Another action</a></li>
-                                    <li><a href="#">Something else here</a></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                                </li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li><a href="#">Separated link</a></li>
-                            </ul>
-                        </div>
-                        <div class="member-list">
-                            <ul class="list-unstyled">
-                                <li class="left clearfix" ng-repeat="r in rooms"
-                                data-chat="room{{$index+1}}" ng-click="chatCtrl.setCurrentRoom(r)">
-                                    <span class="chat-img pull-left">
-                                        <img src='@routes.Assets.versioned("images/conversation.jpeg")'
-                                        alt="User Avatar" class="img-circle">
-                                    </span>
-                                    <div class="chat-body clearfix">
-                                        <div class="header_sec">
-                                            <strong class="primary-font">Pucca</strong> <strong class="pull-right ">
-                                            09:45AM</strong>
-                                        </div>
-                                        <div class="contact_sec">
-                                            <strong class="primary-font">(123) 123-456</strong>
-                                            <span class="badge pull-right">3</span>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-9 message-section">
-                    <div class="row">
-                        <div class="new-message-head">
-                            <div class="pull-left" id="new-conversation">
-                                <button><i class="fa fa-plus-square-o" aria-hidden="true"></i>
-                                    New Conversation
-                                </button>
-                            </div>
-                            <div class="pull-right">
-                                <div class="dropdown">
-                                    <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-cogs" aria-hidden="true"></i> Setting
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                                        <li><a href="/logout">Log out</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chat-area" ng-repeat="r in rooms" data-chat="room{{$index+1}}">
-                            <ul class="list-unstyled" id="chat-list">
-                                <li class="left clearfix {{msg.who}}" ng-repeat="msg in msgs">
-                                    <span class="chat-img1 pull-left">
-                                        <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg"
-                                        alt="User Avatar" class="img-circle">
-                                    </span>
-                                    <div class="chat-body1 clearfix">
-                                        <p ng-if="msg.link">
-                                            <a href="{{msg.link}}">{{msg.fileName}}</a>
-                                        </p>
-                                        <p ng-if="msg.text">
-                                            {{msg.text}}
-                                        </p>
-                                        <div class="chat-time pull-right">09:40PM</div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="message-write">
-                            <div class="checkbox pull-left">
-                                <label><input type="checkbox" id="typeMath">Type math</label>
-                            </div>
-                            <form enctype="multipart/form-data">
-                                <button class="pull-right btn btn-primary" type="file"
-                                ngf-select="uploadFiles($file, $invalidFiles)" multiple>
-                                    <i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files
-                                </button>
-                            </form>
-                            <div id="input-area">
-                                <form ng-submit="submitMsg()">
-                                    <input type="hidden" name="@token.name" id="csrfToken" value="@token.value" />
-                                    <input type="text" name="chat" ng-model="inputText"
-                                    class="form-control ng-pristine ng-valid input-block-level"
-                                    placeholder="Type a message" id="input-box">
-                                    <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              <chat-window></chat-window>
             </div>
         </div>
     </div>
@@ -214,7 +100,8 @@
     <script src='@routes.Assets.versioned("javascripts/app.module.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/user-list/user-list.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/chat/chat.module.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/chat/chat.controller.js")'></script>
+    <script src='@routes.Assets.versioned("javascripts/chat/chat.component.js")'></script>
+    <script src='@routes.Assets.versioned("javascripts/chat/chat.directive.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/chat/chat.service.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/main.js")'></script>
 
