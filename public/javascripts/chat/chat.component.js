@@ -13,7 +13,6 @@ angular
         $scope.msgs = [];
         $scope.inputText = "";
         $scope.user = "Jane Doe #" + Math.floor((Math.random() * 100) + 1);
-        $scope.userList = Users.query();
         $scope.csrfToken = $("#csrf-token").text();
         $scope.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
 
@@ -24,13 +23,6 @@ angular
           $scope.mathField = MQ.MathField(MQElement, {});
           setupMathInput($scope.mathField);
         });
-
-        // comparator function that checks whether the actual string starts with the
-        // expected expression
-        $scope.startsWith = function (actual, expected) {
-          var lowercaseExpected = expected.toLowerCase();
-          return (actual.indexOf(lowercaseExpected) === 0);
-        };
 
         /** change current room, restart EventSource connection */
         $scope.setCurrentRoom = function (room) {
