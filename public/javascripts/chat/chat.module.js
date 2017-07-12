@@ -1,4 +1,4 @@
 'use strict';
 
 // Define the 'chat' module
-angular.module('chat', ['ngFileUpload', 'userList', 'ui.bootstrap']);
+angular.module('chat', ['userList', 'ui.bootstrap', 'ngEmbed']);

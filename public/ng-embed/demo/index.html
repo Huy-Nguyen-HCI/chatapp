@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>ngEmbed demo</title>
+
+	<!-- Extra to make demo look nice -->
+	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- Optional, if using highlight.js -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
+	<!-- Required -->
+	<link rel="stylesheet" href="../src/ng-embed.css">
+
+	<!-- Only for demo -->
+	<style>
+		header{
+			background-color: #00AEE2;
+			padding: 10px;
+			width:100%;
+			color: #fff;
+			text-align: center;
+			font-size: 30px;
+			box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
+			position:fixed;
+			overflow: auto;
+			z-index:9999;
+		}
+		body {
+			font-family : 'Lato';
+		}
+
+		.main {
+			width     : 800px;
+			font-size : 17px;
+			color     : #444;
+			padding-top: 50px;
+		}
+
+		a {
+			text-decoration : none;
+			color           : cornflowerblue;
+		}
+
+		h3 {
+			font-family : inherit;
+			text-align  : center;
+		}
+		h2{
+			font-family : inherit;
+			text-align: center;
+			padding: 15px;
+			border-bottom: 2px solid #f4f4f4;
+			font-weight: 500;
+			margin-bottom: 20px;
+			margin-top: 20px;
+			border-radius: 2px;
+			color: #3498DB;
+			text-transform: uppercase;
+		}
+	</style>
+</head>
+
+<body ng-app="ngEmoticonApp" ng-controller="ngEmoticonCtrl">
+
+<header>ngEmbed</header>
+
+<div class="main center-block" ng-cloak>
+
+	<h2>Simple Filter Usage</h2>
+	<div ng-bind-html="text|embed"></div>
+
+	<h2>Directive Usage</h2>
+
+	<h3>$scope watch support</h3>
+	<textarea class="form-control"
+	          ng-model="model.watchText"
+	          placeholder="Type text containing any of the supported services, emoticons, twitter feed, video url, etc"
+	>
+	</textarea>
+	<ng-embed embed-data="model.watchText" embed-options="watchOptions"></ng-embed>
+
+	<h3>Emojis and Font icons</h3>
+	<ng-embed embed-data="text" embed-options="options"></ng-embed>
+	<h3>Media Embed</h3>
+	<ng-embed embed-data="media" embed-options="options" ></ng-embed>
+	<h3>pdf</h3>
+	<ng-embed embed-data="pdfText" embed-options="options"></ng-embed>
+	<h3>vimeo</h3>
+	<ng-embed embed-data="vimeo" embed-options="options"></ng-embed>
+	<h3>Youtube support</h3>
+	<ng-embed embed-data="youtube" embed-options="options"></ng-embed>
+	<h3>Code Syntax Highlighting</h3>
+	<ng-embed embed-data="text1" embed-options="options"></ng-embed>
+	<h3>Ideone Support</h3>
+	<ng-embed embed-data="ideone" embed-options="options"></ng-embed>
+	<h3>Github Gist Support</h3>
+	<ng-embed embed-data="gist" embed-options="options"></ng-embed>
+	<h3>Plunker Support</h3>
+	<ng-embed embed-data="plunker" embed-options="options"></ng-embed>
+	<h3>jsbin Support</h3>
+	<ng-embed embed-data="jsbin" embed-options="options"></ng-embed>
+	<h3>jsfiddle Support</h3>
+	<ng-embed embed-data="jsfiddle" embed-options="options"></ng-embed>
+	<h3>codepen Support</h3>
+	<ng-embed embed-data="codepen" embed-options="options"></ng-embed>
+	<h3>Spotify Support</h3>
+	<ng-embed embed-data="spotify" embed-options="options"></ng-embed>
+	<h3>SoundCloud Support</h3>
+	<ng-embed embed-data="soundcloud" embed-options="options"></ng-embed>
+	<h3>LiveLeak Support</h3>
+	<ng-embed embed-data="liveleak" embed-options="options"></ng-embed>
+	<h3>dotsub Support</h3>
+	<ng-embed embed-data="dotsub" embed-options="options"></ng-embed>
+	<h3>Dailymotion and TED Embed</h3>
+	<ng-embed embed-data="dailymotion" embed-options="options"></ng-embed>
+	<h3>Twitch TV Embed</h3>
+	<ng-embed embed-data="twitchtv" embed-options="options"></ng-embed>
+	<h3>UStream</h3>
+	<ng-embed embed-data="ustream" embed-options="options"></ng-embed>
+	<h3>Twitter Support</h3>
+	<ng-embed embed-data="twitter" embed-options="options"></ng-embed>
+
+</div>
+</body>
+
+<!-- Optional if using highligt.js or embedding tweets -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+
+<!-- Required -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-sanitize.min.js"></script>
+<script src="../src/ng-embed.js"></script>
+
+<!-- Only for demo -->
+<script src="js/app.js"></script>
+
+</html>

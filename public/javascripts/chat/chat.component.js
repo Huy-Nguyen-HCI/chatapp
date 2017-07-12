@@ -5,8 +5,8 @@ angular
   .module('chat')
   .component('chatWindow', {
     templateUrl: '/assets/javascripts/chat/chat.template.html',
-    controller: ['$scope', '$http', 'chatModel', 'Upload', '$timeout', 'Users',
-      function ($scope, $http, chatModel, Upload, $timeout, Users) {
+    controller: ['$scope', '$http', 'chatModel', 'Users',
+      function ($scope, $http, chatModel, Users) {
 
         $scope.rooms = chatModel.getRooms();
         $scope.currentRoom = $scope.rooms[0];
@@ -14,6 +14,16 @@ angular
         $scope.inputText = "";
         $scope.user = "Jane Doe #" + Math.floor((Math.random() * 100) + 1);
         $scope.userList = Users.query();
+        $scope.csrfToken = $("#csrf-token").text();
+        $scope.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
+
+        angular.element(document).ready(function () {
+          // Save the math input box to scope variable
+          var MQElement = document.getElementById("mathquill");
+          var MQ = MathQuill.getInterface(2);
+          $scope.mathField = MQ.MathField(MQElement, {});
+          setupMathInput($scope.mathField);
+        });
 
         // comparator function that checks whether the actual string starts with the
         // expected expression
@@ -30,15 +40,13 @@ angular
           $scope.listen();
         };
 
-        /** posting chat text to server */
+        /** posting chat text */
         $scope.submitMsg = function () {
-          var csrfToken = $("#csrf-token").text();
-
           var req = {
             method: 'POST',
             url: '/chat',
             headers: {
-              'Csrf-Token': csrfToken
+              'Csrf-Token': $scope.csrfToken
             },
             data: {
               text: $scope.inputText,
@@ -51,52 +59,56 @@ angular
           $scope.inputText = "";
         };
 
-        $scope.displayFile = function(link, fileName) {
-          var csrfToken = $("#csrfToken").attr("value");
+        /** posting math formula */
+        $scope.submitMath = function() {
+          var mathInput = $scope.mathField.latex();
+          if (!mathInput || mathInput === '') {
+            return;
+          }
           var req = {
             method: 'POST',
             url: '/chat',
             headers: {
-              'Csrf-Token': csrfToken
+              'Csrf-Token': $scope.csrfToken
+            },
+            data: {
+              text: "$$" + mathInput + "$$",
+              user: $scope.user,
+              time: (new Date()).toUTCString(),
+              room: $scope.currentRoom.value
+            }
+          };
+          $http(req);
+          $scope.mathField.latex("");
+        };
+
+        /** handle file upload */
+        $scope.showPicker = function() {
+          $scope.filePickerClient.pick({}).then(function (result) {
+            var files = result.filesUploaded;
+            for (var i = 0 ; i < files.length ; i++) {
+              $scope.displayFile(files[i].url, files[i].filename);
+            }
+          });
+        };
+
+        $scope.displayFile = function(link, fileName) {
+          var req = {
+            method: 'POST',
+            url: '/chat',
+            headers: {
+              'Csrf-Token': $scope.csrfToken
             },
             data: {
               link: link,
               fileName: fileName,
               user: $scope.user,
               time: (new Date()).toUTCString(),
-              room: $scope.currentRoom.value,
+              room: $scope.currentRoom.value
             }
           };
           $http(req);
           $scope.inputText = "";
-        };
-
-        /* upload file in chat */
-        $scope.uploadFiles = function(file, errFiles) {
-          var csrfToken = $("#csrfToken").attr("value");
-          $scope.f = file;
-          $scope.errFile = errFiles && errFiles[0];
-          if (file) {
-            file.upload = Upload.upload({
-              url: '/upload',
-              headers: {
-                'Csrf-Token': csrfToken
-              },
-              data: {file: file}
-            });
-
-            file.upload.then(function (response) {
-              $timeout(function () {
-                file.result = response.data;
-                $scope.displayFile("/file-upload/" + file.name, file.name)
-              });
-            }, function (response) {
-              if (response.status > 0) {
-                console.log("error");
-                $scope.errorMsg = response.status + ': ' + response.data;
-              }
-            });
-          }
         };
 
         /** handle incoming messages: add to messages array */
@@ -110,7 +122,6 @@ angular
           $scope.chatFeed = new EventSource("/chatFeed/" + $scope.currentRoom.value);
           $scope.chatFeed.addEventListener("message", $scope.addMsg, false);
         };
-
 
         $scope.listen();
       }]

@@ -76,15 +76,15 @@
         <div class="chat-area" ng-repeat="r in rooms" data-chat="room{{$index+1}}">
             <ul class="list-unstyled" id="chat-list">
                 <li class="left clearfix {{msg.who}}" ng-repeat="msg in msgs">
-                                    <span class="chat-img1 pull-left">
-                                        <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg"
-                                             alt="User Avatar" class="img-circle">
-                                    </span>
+                    <span class="chat-img1 pull-left">
+                      <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg"
+                           alt="User Avatar" class="img-circle">
+                    </span>
                     <div class="chat-body1 clearfix">
                         <p ng-if="msg.link">
                             <a href="{{msg.link}}">{{msg.fileName}}</a>
                         </p>
-                        <p ng-if="msg.text">
+                        <p ng-if="msg.text" data-ng-bind-html="::msg.text | embed">
                             {{msg.text}}
                         </p>
                         <div class="chat-time pull-right">09:40PM</div>
@@ -97,8 +97,7 @@
                 <label><input type="checkbox" id="typeMath">Type math</label>
             </div>
             <form enctype="multipart/form-data">
-                <button class="pull-right btn btn-primary" type="file"
-                        ngf-select="uploadFiles($file, $invalidFiles)" multiple>
+                <button class="pull-right btn btn-primary" type="file" ng-click="showPicker()">
                     <i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files
                 </button>
             </form>
@@ -107,9 +106,10 @@
                     <input type="text" name="chat" ng-model="inputText"
                            class="form-control ng-pristine ng-valid input-block-level"
                            placeholder="Type a message" id="input-box">
-                    <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
-                    </div>
                 </form>
+                <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
+                </div>
+                <button id="mathquill-submit" ng-click="submitMath()"></button>
             </div>
         </div>
     </div>
