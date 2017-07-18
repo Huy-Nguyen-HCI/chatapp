@@ -54,6 +54,7 @@ class SignupController @Inject() (val messagesApi: MessagesApi, userDao: UserDao
 
         val isExist = for { v1 <- dbUsername; v2 <- dbEmail } yield (v1, v2)
 
+        // check whether the username or email already exists
         isExist flatMap {
           case (Some(_), _) =>
             val errorForm = createErrorForm(userInfo, "username", "this username already exists")

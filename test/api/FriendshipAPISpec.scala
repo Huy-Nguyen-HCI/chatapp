@@ -13,7 +13,7 @@ import play.api.db.DBApi
 import play.api.db.evolutions.{Evolution, Evolutions, SimpleEvolutionsReader}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{POST => POST_REQUEST, _}
+import play.api.test.Helpers.{POST => POST_REQUEST, GET => GET_REQUEST, _}
 
 import scala.concurrent.ExecutionContext
 import com.github.t3hnar.bcrypt._
@@ -109,6 +109,27 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
       // cannot accept if there is no pending friend request
       json = """{"sender":"daisy", "receiver":"ann"}"""
+    }
+
+
+    "be able to list all pending requests" in {
+      await(friendshipDAO.insertOrUpdateFriendship(2, 1, Friendship.STATUS_PENDING))
+      await(friendshipDAO.insertOrUpdateFriendship(4, 1, Friendship.STATUS_PENDING))
+
+      var request = FakeRequest(GET_REQUEST, "/api/friend/pending/ann").withHeaders("Host" -> "localhost")
+      var result = route(app, request).get
+
+      // do not authorize user that is not connected in the session
+      status(result) mustBe UNAUTHORIZED
+
+      // authorize user that is connected
+      request = request.withSession(USERNAME_KEY -> "ann")
+      result = route(app, request).get
+
+      status(result) mustBe OK
+
+      val pendings = contentAsJson(result).as[Seq[Long]]
+      pendings must contain allOf (2, 4)
     }
   }
 }

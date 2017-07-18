@@ -6,6 +6,7 @@ import dao.{FriendshipDao, UserDao}
 import models.Friendship
 import play.api.libs.json.JsValue
 import play.api.mvc._
+import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 import controllers.USERNAME_KEY
@@ -22,7 +23,7 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
   val RECEIVER_KEY = "receiver"
 
 
-  def sendFriendRequest = Authenticated {
+  def sendFriendRequest = PostAuthenticated {
     Action.async(parse.json) { request =>
 
       val (senderId, receiverId) = getUserIdPair(request.body)
@@ -44,7 +45,7 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
   }
 
 
-  def acceptFriendRequest = Authenticated {
+  def acceptFriendRequest = PostAuthenticated {
     Action.async(parse.json) { request =>
 
       val (senderId, receiverId) = getUserIdPair(request.body)
@@ -63,14 +64,47 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
     }
   }
 
+
+  def listPendingRequests(username: String) = SessionAuthenticated(username) {
+    Action.async {
+      val user = userDao.findByUsername(username)
+
+      // in case the user exists, return a result which contains a json list of pending friend requests
+      user flatMap {
+        case Some(userRes) => friendshipDao.getPendingRequests(userRes.id.get).map(res => Ok(Json.toJson(res)))
+        case None => Future.successful(BadRequest("This username does not exist"))
+      }
+    }
+  }
+
+
   /*
-   * Action composition that authenticates HTTP request
+   * Action composition that authenticates the login user.
    */
-  case class Authenticated(action: Action[JsValue]) extends Action[JsValue] {
+  case class SessionAuthenticated[A](username: String)(action: Action[A]) extends Action[A] {
+
+    def apply(request: Request[A]): Future[Result] = {
+      val connectedUser = request.session.get(USERNAME_KEY)
+
+      if (connectedUser.isDefined && username == connectedUser.get)
+        action(request)
+      else
+        Future.successful(Unauthorized(views.html.defaultpages.unauthorized()))
+    }
+
+    lazy val parser: BodyParser[A] = action.parser
+  }
+
+
+  /*
+   * Action composition that authenticates HTTP POST request
+   */
+  case class PostAuthenticated(action: Action[JsValue]) extends Action[JsValue] {
 
     def apply(request: Request[JsValue]): Future[Result] = {
       val userInfo = request.session.get(USERNAME_KEY)
       val sender = (request.body \ SENDER_KEY).as[String]
+
 
       if (userInfo.isDefined && sender == userInfo.get)
         action(request)
@@ -80,6 +114,7 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
 
     lazy val parser: BodyParser[JsValue] = parse.json
   }
+
 
   // helper function to query the pair of (sender, receiver) from database
   private def getUserIdPair(json: JsValue) = {

@@ -19,5 +19,8 @@ class FriendshipRouter @Inject()(controller: FriendshipAPI) extends SimpleRouter
 
     case POST(p"/accept") =>
       controller.acceptFriendRequest
+
+    case GET(p"/pending/$username") =>
+      controller.listPendingRequests(username)
   }
 }
