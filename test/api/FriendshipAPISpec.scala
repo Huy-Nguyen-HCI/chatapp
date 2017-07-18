@@ -1,4 +1,4 @@
-package controllers
+package api
 
 import dao.FriendshipDao
 import helpers.{CSRFTest, CachedInject}
@@ -17,6 +17,7 @@ import play.api.test.Helpers.{POST => POST_REQUEST, _}
 
 import scala.concurrent.ExecutionContext
 import com.github.t3hnar.bcrypt._
+import controllers.USERNAME_KEY
 
 
 /**
@@ -67,7 +68,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
 
     "be able to process add friend request" in {
-      val apiUrl = controllers.api.routes.FriendshipAPI.sendFriendRequest().url
+      val apiUrl = "/api/friend/add"
       var json = """{"sender":"ann", "receiver":"bob"}"""
 
       // check status of POST request
@@ -95,8 +96,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
     "be able to accept friend request" in {
       await(friendshipDAO.insertOrUpdateFriendship(1, 2, Friendship.STATUS_PENDING))
-
-      val apiUrl = controllers.api.routes.FriendshipAPI.acceptFriendRequest().url
+      val apiUrl = "/api/friend/accept"
       var json = """{"sender":"bob", "receiver":"ann"}"""
 
       var result = apiPostRequest(apiUrl, json, "bob")

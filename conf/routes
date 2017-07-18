@@ -18,11 +18,8 @@ POST    /chat                       controllers.ChatApplication.postMessage
 
 POST    /upload                     controllers.FileController.upload
 
-GET     /api/users/:name            controllers.api.UserAPI.findByUsername(name: String)
-GET     /api/users                  controllers.api.UserAPI.list
-
-POST    /api/friend/add             controllers.api.FriendshipAPI.sendFriendRequest
-POST    /api/friend/accept          controllers.api.FriendshipAPI.acceptFriendRequest
+->      /api/users                  api.UserRouter
+->      /api/friend                 api.FriendshipRouter
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

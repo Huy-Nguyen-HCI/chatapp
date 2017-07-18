@@ -1,12 +1,11 @@
-package controllers.api
+package api
 
 import javax.inject.Inject
 
 import dao.UserDao
 import models.User
-
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext

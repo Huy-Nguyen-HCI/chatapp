@@ -1,14 +1,14 @@
-package controllers.api
+package api
 
 import javax.inject.Inject
-import play.api.mvc._
-import play.api.libs.json.JsValue
 
-import models.Friendship
 import dao.{FriendshipDao, UserDao}
-import controllers.USERNAME_KEY
+import models.Friendship
+import play.api.libs.json.JsValue
+import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
+import controllers.USERNAME_KEY
 
 /**
   * Created by thang on 6/22/17.
