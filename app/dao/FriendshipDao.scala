@@ -47,10 +47,10 @@ class FriendshipDao @Inject() (protected val dbConfigProvider: DatabaseConfigPro
     db.run(q.result.headOption)
   }
 
-  // get the ids of all users who is requesting friend to the user with this id
-  def getPendingRequests(id: Long): Future[Seq[Long]] = {
+  // get the ids of all users who is making an action with the specified status to this user id
+  def listUsersMakingStatus(id: Long, status: Int): Future[Seq[Long]] = {
     val q = friendships.filter(f =>
-      (f.id1 === id || f.id2 === id) && f.actionId =!= id && f.status === Friendship.STATUS_PENDING
+      (f.id1 === id || f.id2 === id) && f.actionId =!= id && f.status === status
     ).map(f => Case If f.id1 =!= id Then f.id1 Else f.id2)
     db.run(q.result)
   }

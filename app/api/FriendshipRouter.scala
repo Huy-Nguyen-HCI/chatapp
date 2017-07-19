@@ -20,7 +20,7 @@ class FriendshipRouter @Inject()(controller: FriendshipAPI) extends SimpleRouter
     case POST(p"/accept") =>
       controller.acceptFriendRequest
 
-    case GET(p"/pending/$username") =>
-      controller.listPendingRequests(username)
+    case GET(p"/search" ? q"username=$username" & q"status=${int(status)}") =>
+      controller.listUsersMakingStatus(username, status)
   }
 }

@@ -70,7 +70,7 @@ class FriendshipDAOSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInj
       await(friendshipDao.insertOrUpdateFriendship(2, 1, Friendship.STATUS_PENDING))
       await(friendshipDao.insertOrUpdateFriendship(3, 1, Friendship.STATUS_PENDING))
 
-      val res = await(friendshipDao.getPendingRequests(1))
+      val res = await(friendshipDao.listUsersMakingStatus(1, Friendship.STATUS_PENDING))
 
       res must contain only (2, 3)
     }

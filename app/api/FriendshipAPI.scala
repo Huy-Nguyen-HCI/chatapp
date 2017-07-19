@@ -65,14 +65,40 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
   }
 
 
-  def listPendingRequests(username: String) = SessionAuthenticated(username) {
+  def listUsersMakingStatus(username: String, status: Int) = SessionAuthenticated(username) {
     Action.async {
-      val user = userDao.findByUsername(username)
+      // find the user in the database
+      val query = userDao.findByUsername(username)
 
-      // in case the user exists, return a result which contains a json list of pending friend requests
-      user flatMap {
-        case Some(userRes) => friendshipDao.getPendingRequests(userRes.id.get).map(res => Ok(Json.toJson(res)))
-        case None => Future.successful(BadRequest("This username does not exist"))
+      query flatMap {
+        case Some(user) =>
+          friendshipDao.listUsersMakingStatus(user.id.get, status).flatMap(ids => {
+            // get the user names by ids
+            val names = userDao.listByIds(ids)
+            names.map(res => Ok(Json.toJson(res.map(_.username))))
+          })
+        case None =>
+          Future.successful(BadRequest("This user does not exist"))
+      }
+    }
+  }
+
+  // Get the current relationship between a user and another user
+  // The requested user must be logged in
+  def getStatus(requestedUsername: String, otherUsername: String) = SessionAuthenticated(requestedUsername) {
+    Action.async {
+      val requestedUserId = userDao.findByUsername(requestedUsername).map(res => res.get.id.get)
+      val otherUserId = userDao.findByUsername(otherUsername).map(res => res.get.id.get)
+
+      for {
+        r <- requestedUserId
+        o <- otherUserId
+        friendship <- friendshipDao.getFriendship(r, o)
+      } yield {
+        if (friendship.isDefined)
+          Ok(Json.parse(s""" {"status": ${friendship.get._1}, "actionId": ${friendship.get._2}} """))
+        else
+          Ok(Json.obj())
       }
     }
   }

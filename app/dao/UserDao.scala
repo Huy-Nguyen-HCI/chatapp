@@ -20,15 +20,28 @@ class UserDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
 
   private val users = TableQuery[UsersTable]
 
+
   def list: Future[Seq[User]] = db.run(users.result)
+
 
   def findByUsername(username: String): Future[Option[User]] =
     db.run(users.filter(_.username === username).result.headOption)
 
+
   def findByEmail(email: String): Future[Option[User]] =
     db.run(users.filter(_.email === email).result.headOption)
 
+
+  def findById(id: Long): Future[Option[User]] =
+    db.run(users.filter(_.id === id).result.headOption)
+
+
+  def listByIds(ids: Seq[Long]): Future[Seq[User]] =
+    db.run(users.filter(_.id inSet ids).result)
+
+
   def insert(user: User): Future[Unit] = db.run(users += user).map(_ => ())
+
 
   /*
    * User table
