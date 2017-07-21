@@ -2,8 +2,8 @@
 <script type="text/ng-template" id="userDisplay.html">
     <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
     <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
-    <button><i class="fa fa-ban fa-2x" aria-hidden="true"></i></button>
-    <button ng-click="$parent.$parent.$parent.addFriend(match.label)"><i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i></button>
+    <button class="btn btn-danger">Block</button>
+    <button class="btn btn-primary" ng-click="$parent.$parent.$parent.addFriend(match.label)">Add</button>
 </script>
 
 <div class="container-fluid">
@@ -16,6 +16,9 @@
             <a class="dropdown-toggle" data-toggle="dropdown">Notifications
                 <span class="caret"></span></a>
             <ul class="dropdown-menu dropdown-notification">
+                <li ng-if="pendingRequests.length == 0">
+                    <p>There is no notification.</p>
+                </li>
                 <li ng-repeat="user in pendingRequests">
                     <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
                     <p>{{ user }} has sent you a friend request</p>

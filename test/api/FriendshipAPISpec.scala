@@ -117,7 +117,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
       await(friendshipDAO.insertOrUpdateFriendship(4, 1, Friendship.STATUS_PENDING))
 
       var request = FakeRequest(GET_REQUEST, s"/api/friend/search?username=ann&status=${Friendship.STATUS_PENDING}")
-        .withHeaders("Host" -> "localhost")
+                      .withHeaders("Host" -> "localhost")
       var result = route(app, request).get
 
       // do not authorize user that is not connected in the session
@@ -129,8 +129,29 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
       status(result) mustBe OK
 
-      val pendings = contentAsJson(result).as[Seq[Long]]
-      pendings must contain only (2, 4)
+      val pendings = contentAsJson(result).as[Seq[String]]
+      pendings must contain only ("bob", "daisy")
+    }
+
+    "be able to check friendship status" in {
+      await(friendshipDAO.insertOrUpdateFriendship(2, 1, Friendship.STATUS_PENDING))
+
+      var request = FakeRequest(GET_REQUEST, "/api/friend/check?requested=ann&other=bob")
+                      .withHeaders("Host" -> "localhost")
+      var result = route(app, request).get
+
+      // do not authorize the user making the request who is not connected in the session
+      status(result) mustBe UNAUTHORIZED
+
+      request = request.withSession(USERNAME_KEY -> "ann")
+      result = route(app, request).get
+
+      status(result) mustBe OK
+
+      // check content
+      val json = contentAsJson(result)
+      (json \ "status").as[Int] mustBe Friendship.STATUS_PENDING
+      (json \ "actionUser").as[String] mustBe "bob"
     }
   }
 }

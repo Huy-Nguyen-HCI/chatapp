@@ -83,8 +83,8 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
     }
   }
 
-  // Get the current relationship between a user and another user
-  // The requested user must be logged in
+  // Get the current relationship between a user and another user, including the status and
+  // the user who did the last action. The requested user must be logged in.
   def getStatus(requestedUsername: String, otherUsername: String) = SessionAuthenticated(requestedUsername) {
     Action.async {
       val requestedUserId = userDao.findByUsername(requestedUsername).map(res => res.get.id.get)
@@ -95,8 +95,12 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
         o <- otherUserId
         friendship <- friendshipDao.getFriendship(r, o)
       } yield {
-        if (friendship.isDefined)
-          Ok(Json.parse(s""" {"status": ${friendship.get._1}, "actionId": ${friendship.get._2}} """))
+        if (friendship.isDefined) {
+          // get the user with the actionID
+          val actionId = friendship.get._2
+          val actionUser = if (actionId == r) requestedUsername else otherUsername
+          Ok(Json.parse(s""" {"status": ${friendship.get._1}, "actionUser": "$actionUser"} """))
+        }
         else
           Ok(Json.obj())
       }

@@ -14,6 +14,9 @@ userListModule.constant('STATUSES', {PENDING: 0, ACCEPTED: 1, DECLINED: 2, BLOCK
 
 userListModule.service('Friendship', ['$resource', 'STATUSES', function($resource, STATUSES) {
   return $resource('/api/friend/:action', {}, {
-    listPending: {method: 'GET', params: {action: 'search', status: STATUSES.PENDING}, isArray: true}
+
+    listPendingRequests: {method: 'GET', params: {action: 'search', status: STATUSES.PENDING}, isArray: true},
+
+    getStatus: {method: 'GET', params: {action: 'check'}}
   });
 }]);
