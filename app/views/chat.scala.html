@@ -1,4 +1,4 @@
-@(myForm: Form[ChatData])(implicit request: RequestHeader, messages: Messages, session: Session)
+@()(implicit request: RequestHeader, messages: Messages, session: Session)
 
 @import play.filters.csrf.CSRF
 @token = @{ CSRF.getToken.get }

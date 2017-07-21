@@ -34,7 +34,7 @@ class SignupController @Inject() (val messagesApi: MessagesApi, userDao: UserDao
   def index = Action { implicit request =>
     request.session.get(USERNAME_KEY) match {
       case None => Ok(views.html.signup(userForm))
-      case Some(_) => Redirect(routes.ChatApplication.index())
+      case Some(_) => Redirect(routes.ChatController.index())
     }
   }
 
