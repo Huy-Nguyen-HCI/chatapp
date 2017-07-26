@@ -7,12 +7,13 @@ angular
     templateUrl: '/assets/javascripts/chat/chat.template.html',
     controller: ['$scope', '$http', 'chatModel', 'Users',
       function ($scope, $http, chatModel, Users) {
+        var ws = new WebSocket("ws://localhost:9000/chat/socket");
 
         $scope.rooms = chatModel.getRooms();
         $scope.currentRoom = $scope.rooms[0];
         $scope.msgs = [];
         $scope.inputText = "";
-        $scope.user = "Jane Doe #" + Math.floor((Math.random() * 100) + 1);
+        $scope.user = $('#connected-user').text();
         $scope.csrfToken = $("#csrf-token").text();
         $scope.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
 
@@ -26,29 +27,21 @@ angular
 
         /** change current room, restart EventSource connection */
         $scope.setCurrentRoom = function (room) {
+          console.log("here");
           $scope.currentRoom = room;
-          $scope.chatFeed.close();
           $scope.msgs = [];
-          $scope.listen();
         };
 
         /** posting chat text */
         $scope.submitMsg = function () {
-          var req = {
-            method: 'POST',
-            url: '/chat',
-            headers: {
-              'Csrf-Token': $scope.csrfToken
-            },
-            data: {
-              text: $scope.inputText,
-              user: $scope.user,
-              time: (new Date()).toUTCString(),
-              room: $scope.currentRoom.value
-            }
-          };
-          $http(req);
+          $scope.msgs.push($scope.inputText);
+          ws.send($scope.inputText);
           $scope.inputText = "";
+        };
+
+        ws.onmessage = function (msg) {
+          $scope.msgs.push(msg.data);
+          $scope.$digest();
         };
 
         /** posting math formula */
@@ -102,19 +95,5 @@ angular
           $http(req);
           $scope.inputText = "";
         };
-
-        /** handle incoming messages: add to messages array */
-        $scope.addMsg = function (msg) {
-          $scope.$apply(function () { $scope.msgs.push(JSON.parse(msg.data)); });
-          MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-        };
-
-        /** start listening on messages from selected room */
-        $scope.listen = function () {
-          $scope.chatFeed = new EventSource("/chatFeed/" + $scope.currentRoom.value);
-          $scope.chatFeed.addEventListener("message", $scope.addMsg, false);
-        };
-
-        $scope.listen();
       }]
   });

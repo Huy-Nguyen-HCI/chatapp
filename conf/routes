@@ -12,10 +12,8 @@ GET     /logout                     controllers.LoginController.logout
 GET     /signup                     controllers.SignupController.index
 POST    /signup                     controllers.SignupController.signup
 
-GET     /chat/notifications         controllers.FriendSocket.socket
-GET     /chat                       controllers.ChatApplication.index
-GET     /chatFeed/:room             controllers.ChatApplication.chatFeed(room: String)
-POST    /chat                       controllers.ChatApplication.postMessage
+GET     /chat                       controllers.ChatController.index
+GET     /chat/socket                controllers.ChatController.socket
 
 POST    /upload                     controllers.FileController.upload
 

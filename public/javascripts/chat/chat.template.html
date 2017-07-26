@@ -75,18 +75,13 @@
         </div>
         <div class="chat-area" ng-repeat="r in rooms" data-chat="room{{$index+1}}">
             <ul class="list-unstyled" id="chat-list">
-                <li class="left clearfix {{msg.who}}" ng-repeat="msg in msgs">
+                <li class="left clearfix" ng-repeat="msg in msgs track by $index">
                     <span class="chat-img1 pull-left">
                       <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg"
                            alt="User Avatar" class="img-circle">
                     </span>
                     <div class="chat-body1 clearfix">
-                        <p ng-if="msg.link">
-                            <a href="{{msg.link}}">{{msg.fileName}}</a>
-                        </p>
-                        <p ng-if="msg.text" data-ng-bind-html="::msg.text | embed">
-                            {{msg.text}}
-                        </p>
+                        <p>{{ msg }}</p>
                         <div class="chat-time pull-right">09:40PM</div>
                     </div>
                 </li>
