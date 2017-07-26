@@ -27,10 +27,9 @@ angular
 
         /** change current room, restart EventSource connection */
         $scope.setCurrentRoom = function (room) {
+          console.log("here");
           $scope.currentRoom = room;
-          $scope.chatFeed.close();
           $scope.msgs = [];
-          $scope.listen();
         };
 
         /** posting chat text */
