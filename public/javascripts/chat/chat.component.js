@@ -7,12 +7,16 @@ angular
     templateUrl: '/assets/javascripts/chat/chat.template.html',
     controller: ['$scope', '$http', 'chatModel', 'Users',
       function ($scope, $http, chatModel, Users) {
+
+        // websocket for sending chat messages
         var ws = new WebSocket("ws://localhost:9000/chat/socket");
 
         $scope.rooms = chatModel.getRooms();
         $scope.currentRoom = $scope.rooms[0];
+
         $scope.msgs = [];
         $scope.inputText = "";
+
         $scope.user = $('#connected-user').text();
         $scope.csrfToken = $("#csrf-token").text();
         $scope.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
@@ -27,7 +31,6 @@ angular
 
         /** change current room, restart EventSource connection */
         $scope.setCurrentRoom = function (room) {
-          console.log("here");
           $scope.currentRoom = room;
           $scope.msgs = [];
         };

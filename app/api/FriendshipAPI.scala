@@ -33,8 +33,9 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
         r <- receiverId
         friendship <- friendshipDao.getFriendship(s, r)
       } yield {
-        // check if the sender is blocked by the receiver
-        if (friendship.isDefined && friendship.get == (Friendship.STATUS_BLOCKED, r))
+        // check if the sender is blocked by the receiver or there is already a friend request
+        if (friendship.isDefined && (friendship.get == (Friendship.STATUS_BLOCKED, r) ||
+                                     friendship.get == (Friendship.STATUS_PENDING, s)))
           BadRequest("Cannot send friend request")
         else {
           friendshipDao.insertOrUpdateFriendship(s, r, Friendship.STATUS_PENDING)
@@ -59,7 +60,9 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
         if (friendship.isDefined && friendship.get == (Friendship.STATUS_PENDING, r)) {
           friendshipDao.insertOrUpdateFriendship(s, r, Friendship.STATUS_ACCEPTED)
           Ok("You are now friends!")
-        } else BadRequest("There is no friend request")
+        } else {
+          BadRequest("There is no friend request")
+        }
       }
     }
   }

@@ -17,7 +17,7 @@ class ChatController @Inject()(val messagesApi: MessagesApi)
   val chat = actorSystem.actorOf(Props[Chat], "chat")
 
   def socket = WebSocket.accept[String, String] { implicit request =>
-    ActorFlow.actorRef(out => Props(new ClientActor(out, chat)))
+    ActorFlow.actorRef(out => Props(new ChatClientActor(out, chat)))
   }
 
   def index = Action { implicit request =>

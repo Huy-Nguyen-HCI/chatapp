@@ -5,7 +5,9 @@ import akka.actor.{Actor, ActorRef}
 /**
   * Created by thangle on 7/21/17.
   */
-class ClientActor(out: ActorRef, chat: ActorRef) extends Actor {
+class ChatClientActor(out: ActorRef, chat: ActorRef) extends Actor {
+
+  import Chat.{Join, Leave}
 
   chat ! Join
 
