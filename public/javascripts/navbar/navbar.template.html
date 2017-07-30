@@ -16,9 +16,13 @@
             <a class="dropdown-toggle" data-toggle="dropdown">Notifications
                 <span class="caret"></span></a>
             <ul class="dropdown-menu dropdown-notification">
-                <li ng-repeat="user in pendingRequests">
+                <li ng-repeat="msg in notifications">
                     <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
-                    <p>{{ user }} has sent you a friend request</p>
+                    <p>
+                        {{ msg.sender }}
+                        <span ng-if="msg.status === STATUSES.PENDING">has sent you a friend request.</span>
+                        <span ng-if="msg.status === STATUSES.ACCEPTED">has accepted your friend request.</span>
+                    </p>
                     <i class="fa fa-check-circle-o fa-2x" aria-hidden="true"></i>
                     <i class="fa fa-times-circle-o fa-2x" aria-hidden="true"></i>
                 </li>

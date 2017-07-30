@@ -27,7 +27,7 @@ class Notification extends Actor {
 
     case ClientSentMessage(text) =>
       val json = Json.parse(text)
-      val receiver = (json \ "receiver").as[String]
+      val receiver = (json \ WS_RECEIVER_KEY).as[String]
       // send the message to its receiver
       // if the receiver is not connecting, store the message in the list of offline messages
       actorRefs.get(receiver) match {
