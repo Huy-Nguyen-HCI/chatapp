@@ -81,9 +81,12 @@
                            alt="User Avatar" class="img-circle">
                     </span>
                     <div class="chat-body1 clearfix">
-                        <p ng-if="msg" data-ng-bind-html="::msg | embed">
-                            {{msg}}
+                        <p ng-if="msg.link">
+                            <a href="{{msg.link}}">{{msg.fileName}}</a>
                         </p>
+                        <p ng-if="msg.text" data-ng-bind-html="::msg.text | embed">
+                            {{msg.text}}
+                        </p>          
                         <div class="chat-time pull-right">09:40PM</div>
                     </div>
                 </li>

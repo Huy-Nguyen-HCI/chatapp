@@ -48,15 +48,14 @@ angular
           if (!isInputValid(inputText)) return;
 
           var sendData = {text: inputText}
-          $scope.msgs.push(inputText);
+          $scope.msgs.push(sendData);
           ws.send(JSON.stringify(sendData));
 
           $scope.inputText = "";
         };
 
         ws.onmessage = function (msg) {
-          console.log(JSON.stringify(msg.data));
-          $scope.msgs.push(JSON.parse(msg.data).text);
+          $scope.msgs.push(JSON.parse(msg.data));
           MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
           $scope.$digest();
         };
@@ -85,9 +84,10 @@ angular
         };
 
         $scope.displayFile = function(link, fileName) {
-          var sendData = {text: fileName, link: link};
+          console.log("hello");
+          var sendData = {fileName: fileName, link: link};
           $scope.msgs.push(sendData);
-          ws.send(sendData);
+          ws.send(JSON.stringify(sendData));
         };
       }]
   });
