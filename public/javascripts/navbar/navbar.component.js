@@ -5,7 +5,8 @@ angular
   .module('navBar')
   .component('navBar', {
     templateUrl: '/assets/javascripts/navbar/navbar.template.html',
-    controller: ['$scope', 'Users', 'Friendship','STATUSES', function($scope, Users, Friendship, STATUSES) {
+    controller: ['$scope', 'Users', 'Friendship','statusCodes',
+      function($scope, Users, Friendship, statusCodes) {
 
       var csrfToken = $('#csrf-token').text();
 
@@ -13,15 +14,38 @@ angular
       $scope.username = $('#connected-user').text();
 
       $scope.notifications = [];
-      $scope.STATUSES = STATUSES;
-      var pendingRequests = Friendship.listPending({ username : $scope.username }, function() {
-        pendingRequests.forEach(function(user) {
-          $scope.notifications.push({sender: user, status: STATUSES.PENDING});
-        });
+
+      /**
+       * Containing the status codes for pending, accepted, declined and blocked.
+       * The status codes are to be retrieved from the server.
+       *
+       * @type {{PENDING: number, BLOCKED: number, DECLINED: number, ACCEPTED: number}}
+       */
+      $scope.STATUSES = {};
+
+      // retrieve the status codes from the server and initialize notifications
+      statusCodes.then(
+        function (response) {
+          $scope.STATUSES = response.data;
+
+          // after having the status codes, get the list of pending requests
+          var pendingRequests = Friendship.query(
+            { action: 'search', username: $scope.username, status: $scope.STATUSES.PENDING},
+            function() {
+              pendingRequests.forEach(function(user) {
+                $scope.notifications.push({sender: user, status: $scope.STATUSES.PENDING});
+              });
+            }
+          );
       });
 
-      // websocket for real-time notifications
+      /**
+       * Websocket for friendship request notification.
+       *
+       * @type {WebSocket}
+       */
       var ws = new WebSocket("ws://localhost:9000/noti/socket");
+
       ws.onmessage = function(msg) {
         console.log(msg);
         var data = JSON.parse(msg.data);
@@ -32,8 +56,8 @@ angular
       // functions for handling friend requests
       function sendRequest (action, otherUser) {
         var actionToStatus = {
-          'add': STATUSES.PENDING,
-          'accept': STATUSES.ACCEPTED
+          'add': $scope.STATUSES.PENDING,
+          'accept': $scope.STATUSES.ACCEPTED
         };
         Friendship.save(
           { action: action, csrfToken: csrfToken },

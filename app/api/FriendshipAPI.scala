@@ -3,7 +3,7 @@ package api
 import javax.inject.Inject
 
 import dao.{FriendshipDao, UserDao}
-import models.Friendship
+import models.FriendshipStatusCode
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.libs.json._
@@ -14,7 +14,7 @@ import controllers.USERNAME_KEY
 /**
   * Created by thang on 6/22/17.
   */
-class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
+class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, friendshipCode: FriendshipStatusCode)
                               (implicit executionContext: ExecutionContext)
                     extends Controller {
 
@@ -34,11 +34,11 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
         friendship <- friendshipDao.getFriendship(s, r)
       } yield {
         // check if the sender is blocked by the receiver or there is already a friend request
-        if (friendship.isDefined && (friendship.get == (Friendship.STATUS_BLOCKED, r) ||
-                                     friendship.get == (Friendship.STATUS_PENDING, s)))
+        if (friendship.isDefined && (friendship.get == (friendshipCode.BLOCKED, r) ||
+                                     friendship.get == (friendshipCode.PENDING, s)))
           BadRequest("Cannot send friend request")
         else {
-          friendshipDao.insertOrUpdateFriendship(s, r, Friendship.STATUS_PENDING)
+          friendshipDao.insertOrUpdateFriendship(s, r, friendshipCode.PENDING)
           Ok("Request sent")
         }
       }
@@ -57,8 +57,8 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
         friendship <- friendshipDao.getFriendship(s, r)
       } yield {
         // check if there is actually a pending friend request from the receiver
-        if (friendship.isDefined && friendship.get == (Friendship.STATUS_PENDING, r)) {
-          friendshipDao.insertOrUpdateFriendship(s, r, Friendship.STATUS_ACCEPTED)
+        if (friendship.isDefined && friendship.get == (friendshipCode.PENDING, r)) {
+          friendshipDao.insertOrUpdateFriendship(s, r, friendshipCode.ACCEPTED)
           Ok("You are now friends!")
         } else {
           BadRequest("There is no friend request")

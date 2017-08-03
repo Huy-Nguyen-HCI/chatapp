@@ -33,9 +33,15 @@ libraryDependencies ++= Seq(
   "org.webjars" % "angularjs" % "2.0.0-alpha.22"
 )
 
-herokuAppName in Compile := "student-chat-app"
+herokuAppName in Compile := "blooming-beyond-34325"
 
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
+
+// add resources folder to production classpath
+import com.typesafe.sbt.packager.MappingsHelper._
+mappings in Universal ++= directory(baseDirectory.value / "public" / "resources").map { x =>
+  (x._1, "public/" + x._2)
+}
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "pt-lmt.controllers._"
