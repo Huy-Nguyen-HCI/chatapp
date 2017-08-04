@@ -47,7 +47,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
   "FriendshipAPI" must {
 
-    val friendshipDAO = getInstance[FriendshipDao]
+    val friendshipDao = getInstance[FriendshipDao]
     implicit val executionContext = getInstance[ExecutionContext]
 
     def apiPostRequest(url: String, json: String, username: String = "")
@@ -75,7 +75,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
       status(result) mustEqual OK
 
       // check value in db
-      friendshipDAO.getFriendship(1, 2).map { res =>
+      friendshipDao.getFriendship(1, 2).map { res =>
         res.get mustEqual (friendshipCode.PENDING, 1)
       }
 
@@ -94,7 +94,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
 
     "be able to accept friend request" in {
-      await(friendshipDAO.insertOrUpdateFriendship(1, 2, friendshipCode.PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(1, 2, friendshipCode.PENDING))
       val apiUrl = "/api/friend/accept"
       var json = """{"sender":"bob", "receiver":"ann"}"""
 
@@ -102,7 +102,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
       status(result) mustBe OK
 
       // check value in db
-      friendshipDAO.getFriendship(1, 2).map { res =>
+      friendshipDao.getFriendship(1, 2).map { res =>
         res.get mustEqual (friendshipCode.ACCEPTED, 2)
       }
 
@@ -112,8 +112,8 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
 
     "be able to list all pending requests" in {
-      await(friendshipDAO.insertOrUpdateFriendship(2, 1, friendshipCode.PENDING))
-      await(friendshipDAO.insertOrUpdateFriendship(4, 1, friendshipCode.PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(2, 1, friendshipCode.PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(4, 1, friendshipCode.PENDING))
 
       var request = FakeRequest(GET_REQUEST, s"/api/friend/search?username=ann&status=${friendshipCode.PENDING}")
         .withHeaders("Host" -> "localhost")
@@ -130,6 +130,18 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
       val pendings = contentAsJson(result).as[Seq[String]]
       pendings must contain only ("bob", "daisy")
+    }
+
+
+    "be able to remove friendship" in {
+      await(friendshipDao.insertOrUpdateFriendship(2, 1, friendshipCode.PENDING))
+
+      val json = """{"sender":"ann", "receiver":"bob"}"""
+      val result = apiPostRequest("/api/friend/remove", json, "ann")
+      status(result) mustBe OK
+
+      val friendship = await(friendshipDao.getFriendship(1, 2))
+      friendship.isDefined mustBe false
     }
   }
 }

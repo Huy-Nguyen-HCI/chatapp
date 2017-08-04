@@ -13,7 +13,7 @@ import play.api.test.Helpers._
 /**
   * Created by thang on 6/22/17.
   */
-class FriendshipDAOSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInject
+class FriendshipDaoSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInject
     with BeforeAndAfter {
 
   private val db = getInstance[DBApi].database("default")
@@ -74,5 +74,12 @@ class FriendshipDAOSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInj
       res must contain only (2, 3)
     }
 
+    "be able to remove friendship" in {
+      await(friendshipDao.insertOrUpdateFriendship(1, 2, friendshipCode.PENDING))
+      await(friendshipDao.removeFriendship(1, 2))
+
+      val res = await(friendshipDao.getFriendship(1, 2))
+      res.isDefined mustBe false
+    }
   }
 }

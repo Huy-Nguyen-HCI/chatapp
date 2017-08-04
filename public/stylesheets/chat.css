@@ -76,7 +76,6 @@ html, body {
   float: right;
   margin-left: 5px;
   margin-right: 5px;
-  background-color: transparent;
   border-style: none;
 }
 #searchUser .dropdown-menu li button:hover {

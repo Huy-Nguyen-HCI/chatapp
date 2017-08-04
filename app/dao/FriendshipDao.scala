@@ -47,6 +47,12 @@ class FriendshipDao @Inject() (protected val dbConfigProvider: DatabaseConfigPro
     db.run(q.result.headOption)
   }
 
+  def removeFriendship(id1: Long, id2: Long): Future[Unit] = {
+    val (first, second) = sortIds(id1, id2)
+    val q = friendships.filter(f => f.id1 === first && f.id2 === second)
+    db.run(q.delete).map(_ => ())
+  }
+
   // get the ids of all users who is making an action with the specified status to this user id
   def listUsersMakingStatus(id: Long, status: Int): Future[Seq[Long]] = {
     val q = friendships.filter(f =>

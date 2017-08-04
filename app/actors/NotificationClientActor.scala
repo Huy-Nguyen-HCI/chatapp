@@ -8,9 +8,11 @@ import akka.actor.{Actor, ActorRef}
   */
 class NotificationClientActor(out: ActorRef, notification: ActorRef, name: String) extends Actor {
 
-  import Notification.Join
+  import Notification._
 
   notification ! Join(name)
+
+  override def postStop() = notification ! Leave(name)
 
   def receive = {
     case text: String =>

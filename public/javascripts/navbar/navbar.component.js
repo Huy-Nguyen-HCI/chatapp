@@ -63,7 +63,9 @@ angular
           { action: action, csrfToken: csrfToken },
           { sender: $scope.username, receiver: otherUser },
           function() {
-            ws.send(JSON.stringify({ sender: $scope.username, receiver: otherUser, status: actionToStatus[action] }));
+            if (action !== 'remove') {
+              ws.send(JSON.stringify({ sender: $scope.username, receiver: otherUser, status: actionToStatus[action] }));
+            }
           },
           function(error) {
             console.log(error);
@@ -77,6 +79,14 @@ angular
 
       $scope.acceptFriend = function (otherUser) {
         sendRequest('accept', otherUser);
+      };
+
+      $scope.removeFriend = function (otherUser) {
+        sendRequest('remove', otherUser);
+      };
+
+      $scope.checkStatus = function (otherUser) {
+        return Friendship.get({ action: 'check', first: $scope.username, second: otherUser });
       };
 
       // comparator function that checks whether the actual string starts with the

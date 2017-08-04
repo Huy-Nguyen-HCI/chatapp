@@ -28,20 +28,21 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, f
 
       val (senderId, receiverId) = getUserIdPair(request.body)
 
-      for {
+      val res = for {
         s <- senderId
         r <- receiverId
-        friendship <- friendshipDao.getFriendship(s, r)
-      } yield {
-        // check if the sender is blocked by the receiver or there is already a friend request
-        if (friendship.isDefined && (friendship.get == (friendshipCode.BLOCKED, r) ||
-                                     friendship.get == (friendshipCode.PENDING, s)))
-          BadRequest("Cannot send friend request")
-        else {
-          friendshipDao.insertOrUpdateFriendship(s, r, friendshipCode.PENDING)
-          Ok("Request sent")
-        }
+        f <- friendshipDao.getFriendship(s, r)
+      } yield (s, r, f)
+
+      res flatMap {
+        case (s, r, Some(f)) if f == (friendshipCode.BLOCKED, r) ||
+                                      f._1 == friendshipCode.PENDING ||
+                                      f._2 == friendshipCode.ACCEPTED =>
+          Future.successful(BadRequest("Cannot send friend request"))
+        case (s, r, _) =>
+          friendshipDao.insertOrUpdateFriendship(s, r, friendshipCode.PENDING).map(_ => Ok("Request sent"))
       }
+
     }
   }
 
@@ -51,19 +52,32 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, f
 
       val (senderId, receiverId) = getUserIdPair(request.body)
 
+      val res = for {
+        s <- senderId
+        r <- receiverId
+        f <- friendshipDao.getFriendship(s, r)
+      } yield (s, r, f)
+
+      res flatMap {
+        // match if there is an actual pending request from the receiver
+        case (s, r, Some(f)) if f == (friendshipCode.PENDING, r) =>
+          friendshipDao.insertOrUpdateFriendship(s, r, friendshipCode.ACCEPTED).map(_ => Ok("Request sent"))
+        case _ =>
+          Future.successful(BadRequest("Cannot accept friend request"))
+      }
+    }
+  }
+
+
+  def removeFriendship() = PostAuthenticated {
+    Action.async(parse.json) { request =>
+      val (senderId, receiverId) = getUserIdPair(request.body)
+
       for {
         s <- senderId
         r <- receiverId
-        friendship <- friendshipDao.getFriendship(s, r)
-      } yield {
-        // check if there is actually a pending friend request from the receiver
-        if (friendship.isDefined && friendship.get == (friendshipCode.PENDING, r)) {
-          friendshipDao.insertOrUpdateFriendship(s, r, friendshipCode.ACCEPTED)
-          Ok("You are now friends!")
-        } else {
-          BadRequest("There is no friend request")
-        }
-      }
+        _ <- friendshipDao.removeFriendship(s, r)
+      } yield Ok("Remove successfully")
     }
   }
 
@@ -98,8 +112,11 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, f
         o <- otherUserId
         friendship <- friendshipDao.getFriendship(r, o)
       } yield {
-        if (friendship.isDefined)
-          Ok(Json.parse(s""" {"status": ${friendship.get._1}, "actionId": ${friendship.get._2}} """))
+        if (friendship.isDefined) {
+          val actionId = friendship.get._2
+          val actionUser = if (actionId == r) requestedUsername else otherUsername
+          Ok(Json.parse(s""" {"status": ${friendship.get._1}, "actionUser": "$actionUser"} """))
+        }
         else
           Ok(Json.obj())
       }

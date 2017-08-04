@@ -25,6 +25,9 @@ class Notification extends Actor {
         offlineMessages -= name
       }
 
+    case Leave(name) =>
+      actorRefs -= name
+
     case ClientSentMessage(text) =>
       val json = Json.parse(text)
       val receiver = (json \ WS_RECEIVER_KEY).as[String]
@@ -45,4 +48,5 @@ class Notification extends Actor {
 
 object Notification {
   final case class Join(name: String)
+  final case class Leave(name: String)
 }
