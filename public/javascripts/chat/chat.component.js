@@ -35,38 +35,45 @@ angular
           $scope.msgs = [];
         };
 
+        /** re-render the page whenever any model is updated **/
+        $scope.$watch(function(){
+          MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+          return true;
+        });
+
+        /** check if a message is nonempty and does not contain only space **/
+        function isInputValid(message) {
+          return message && message.replace(/\s/g, '').length > 0;
+        }
+
         /** posting chat text */
         $scope.submitMsg = function () {
-          $scope.msgs.push($scope.inputText);
-          ws.send($scope.inputText);
+          var inputText = $scope.inputText;
+          if (!isInputValid(inputText)) return;
+
+          var sendData = {text: inputText};
+          $scope.msgs.push(sendData);
+          ws.send(JSON.stringify(sendData));
+
           $scope.inputText = "";
         };
 
         ws.onmessage = function (msg) {
-          $scope.msgs.push(msg.data);
+          $scope.msgs.push(JSON.parse(msg.data));
+          MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
           $scope.$digest();
         };
 
         /** posting math formula */
         $scope.submitMath = function() {
           var mathInput = $scope.mathField.latex();
-          if (!mathInput || mathInput === '') {
-            return;
-          }
-          var req = {
-            method: 'POST',
-            url: '/chat',
-            headers: {
-              'Csrf-Token': $scope.csrfToken
-            },
-            data: {
-              text: "$$" + mathInput + "$$",
-              user: $scope.user,
-              time: (new Date()).toUTCString(),
-              room: $scope.currentRoom.value
-            }
-          };
-          $http(req);
+
+          // if input is empty or only contains space, ignore
+          if (!isInputValid(mathInput)) return;
+
+          mathInput = "$$" + mathInput + "$$";
+          $scope.msgs.push(mathInput);
+          ws.send(mathInput);
           $scope.mathField.latex("");
         };
 
@@ -77,26 +84,15 @@ angular
             for (var i = 0 ; i < files.length ; i++) {
               $scope.displayFile(files[i].url, files[i].filename);
             }
+            $scope.$digest();
           });
         };
 
         $scope.displayFile = function(link, fileName) {
-          var req = {
-            method: 'POST',
-            url: '/chat',
-            headers: {
-              'Csrf-Token': $scope.csrfToken
-            },
-            data: {
-              link: link,
-              fileName: fileName,
-              user: $scope.user,
-              time: (new Date()).toUTCString(),
-              room: $scope.currentRoom.value
-            }
-          };
-          $http(req);
-          $scope.inputText = "";
+          console.log("hello");
+          var sendData = {fileName: fileName, link: link};
+          $scope.msgs.push(sendData);
+          ws.send(JSON.stringify(sendData));
         };
       }]
   });

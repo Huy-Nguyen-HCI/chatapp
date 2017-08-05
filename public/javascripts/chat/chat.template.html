@@ -32,10 +32,10 @@
             <ul class="list-unstyled">
                 <li class="left clearfix" ng-repeat="r in rooms"
                     data-chat="room{{$index+1}}" ng-click="chatCtrl.setCurrentRoom(r)">
-                                    <span class="chat-img pull-left">
-                                        <img src="/assets/images/conversation.jpeg"
-                                             alt="User Avatar" class="img-circle">
-                                    </span>
+                        <span class="chat-img pull-left">
+                            <img src="/assets/images/conversation.jpeg"
+                                 alt="User Avatar" class="img-circle">
+                        </span>
                     <div class="chat-body clearfix">
                         <div class="header_sec">
                             <strong class="primary-font">Pucca</strong> <strong class="pull-right ">
@@ -81,7 +81,12 @@
                            alt="User Avatar" class="img-circle">
                     </span>
                     <div class="chat-body1 clearfix">
-                        <p>{{ msg }}</p>
+                        <p ng-if="msg.link">
+                            <a href="{{msg.link}}">{{msg.fileName}}</a>
+                        </p>
+                        <p ng-if="msg.text" data-ng-bind-html="::msg.text | embed">
+                            {{msg.text}}
+                        </p>          
                         <div class="chat-time pull-right">09:40PM</div>
                     </div>
                 </li>

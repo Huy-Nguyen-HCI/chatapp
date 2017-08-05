@@ -33,7 +33,7 @@ function init() {
 
   mathInputBox.keypress(function (e) {
     var keycode = (event.keyCode ? event.keyCode : event.which);
-    if (keycode === '13') {
+    if (keycode === 13) {
       e.preventDefault();
       $('#mathquill-submit').click();
     }

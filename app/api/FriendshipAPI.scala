@@ -100,8 +100,8 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, f
     }
   }
 
-  // Get the current relationship between a user and another user
-  // The requested user must be logged in
+  // Get the current relationship between a user and another user, including the status and
+  // the user who did the last action. The requested user must be logged in.
   def getStatus(requestedUsername: String, otherUsername: String) = SessionAuthenticated(requestedUsername) {
     Action.async {
       val requestedUserId = userDao.findByUsername(requestedUsername).map(res => res.get.id.get)
@@ -143,19 +143,24 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, f
 
 
   /*
-   * Action composition that authenticates HTTP POST request
+   * Action composition that authenticates HTTP POST request.
+   * The POST request must have a json body with sender and receiver values.
    */
   case class PostAuthenticated(action: Action[JsValue]) extends Action[JsValue] {
 
     def apply(request: Request[JsValue]): Future[Result] = {
       val userInfo = request.session.get(USERNAME_KEY)
-      val sender = (request.body \ SENDER_KEY).as[String]
 
-
-      if (userInfo.isDefined && sender == userInfo.get)
-        action(request)
-      else
-        Future.successful(Unauthorized(views.html.defaultpages.unauthorized()))
+      if ((request.body \ SENDER_KEY).asOpt[String].isDefined &&
+          (request.body \ RECEIVER_KEY).asOpt[String].isDefined) {
+        val sender = (request.body \ SENDER_KEY).as[String]
+        if (userInfo.isDefined && sender == userInfo.get)
+          action(request)
+        else
+          Future.successful(Unauthorized(views.html.defaultpages.unauthorized()))
+      } else {
+        Future.successful(BadRequest("Invalid API POST format."))
+      }
     }
 
     lazy val parser: BodyParser[JsValue] = parse.json
