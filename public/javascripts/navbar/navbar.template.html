@@ -1,24 +1,24 @@
 <!-- Angular UI templates -->
 <script type="text/ng-template" id="userDisplay.html">
-    <div ng-init="$ctrl = $parent.$parent.$parent; r = $ctrl.checkStatus(match.label)">
+    <div ng-init="friendCtrl = $parent.$parent.$parent.friendCtrl; r = friendCtrl.checkStatus(match.label)">
         <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
         <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
-        <span ng-if="r.status == $ctrl.STATUSES.PENDING">
-            <button ng-if="r.actionUser == $ctrl.username" ng-click="$ctrl.removeFriend(match.label)" class="btn btn-primary">Cancel</button>
-            <button ng-if="r.actionUser == match.label" ng-click="$ctrl.acceptFriend(match.label)" class="btn btn-primary">Accept</button>
+        <span ng-if="r.status == friendCtrl.STATUSES.PENDING">
+            <button ng-if="r.actionUser == friendCtrl.username" ng-click="friendCtrl.removeFriend(match.label)" class="btn btn-primary">Cancel</button>
+            <button ng-if="r.actionUser == match.label" ng-click="friendCtrl.acceptFriend(match.label)" class="btn btn-primary">Accept</button>
         </span>
-        <span ng-if="r.status == $ctrl.STATUSES.ACCEPTED">
-            <button class="btn btn-primary" ng-click="$ctrl.removeFriend(match.label)">Unfriend</button>
+        <span ng-if="r.status == friendCtrl.STATUSES.ACCEPTED">
+            <button class="btn btn-primary" ng-click="friendCtrl.removeFriend(match.label)">Unfriend</button>
         </span>
-        <span ng-if="r.status != $ctrl.STATUSES.PENDING && r.status != $ctrl.STATUSES.ACCEPTED">
-            <button class="btn btn-primary" ng-click="$ctrl.addFriend(match.label)">Add</button>
+        <span ng-if="r.status != friendCtrl.STATUSES.PENDING && r.status != friendCtrl.STATUSES.ACCEPTED">
+            <button class="btn btn-primary" ng-click="friendCtrl.addFriend(match.label)">Add</button>
         </span>
     </div>
 </script>
 
 <div class="container-fluid">
     <div class="navbar-header">
-        <a class="navbar-brand">Hello {{ username }}</a>
+        <a class="navbar-brand">Hello {{ friendCtrl.username }}</a>
     </div>
     <ul class="nav navbar-nav">
         <li class="active"><a href="#">Chat</a></li>
@@ -26,15 +26,15 @@
             <a class="dropdown-toggle" data-toggle="dropdown">Notifications
                 <span class="caret"></span></a>
             <ul class="dropdown-menu dropdown-notification">
-                <li ng-if="notifications.length > 0" ng-repeat="msg in notifications">
+                <li ng-if="friendCtrl.notifications.length > 0" ng-repeat="msg in friendCtrl.notifications">
                     <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
                     <p>
                         {{ msg.sender }}
-                        <span ng-if="msg.status === STATUSES.PENDING">has sent you a friend request.</span>
-                        <span ng-if="msg.status === STATUSES.ACCEPTED">has accepted your friend request.</span>
+                        <span ng-if="msg.status === friendCtrl.STATUSES.PENDING">has sent you a friend request.</span>
+                        <span ng-if="msg.status === friendCtrl.STATUSES.ACCEPTED">has accepted your friend request.</span>
                     </p>
                 </li>
-                <li ng-if="notifications.length == 0">
+                <li ng-if="friendCtrl.notifications.length == 0">
                     <p>There isn't any notification.</p>
                 </li>
             </ul>
@@ -48,9 +48,9 @@
                 </button>
             </div>
             <input
-                type="text" ng-model="selectedUser" placeholder="Search username"
+                type="text" ng-model="friendCtrl.selectedUser" placeholder="Search username"
                 class="form-control search-query" typeahead-template-url="userDisplay.html"
-                uib-typeahead="user for user in userList | filter:$viewValue:startsWith | limitTo:8">
+                uib-typeahead="user for user in friendCtrl.userList | filter:$viewValue:friendCtrl.startsWith | limitTo:8">
         </div>
     </form>
     <ul class="nav navbar-nav navbar-right">

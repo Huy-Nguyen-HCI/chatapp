@@ -30,7 +30,7 @@
         </div>
         <div class="member-list">
             <ul class="list-unstyled">
-                <li class="left clearfix" ng-repeat="r in rooms"
+                <li class="left clearfix" ng-repeat="r in chatCtrl.rooms"
                     data-chat="room{{$index+1}}" ng-click="chatCtrl.setCurrentRoom(r)">
                         <span class="chat-img pull-left">
                             <img src="/assets/images/conversation.jpeg"
@@ -73,9 +73,9 @@
                 </div>
             </div>
         </div>
-        <div class="chat-area" ng-repeat="r in rooms" data-chat="room{{$index+1}}">
+        <div class="chat-area" ng-repeat="r in chatCtrl.rooms" data-chat="room{{$index+1}}">
             <ul class="list-unstyled" id="chat-list">
-                <li class="left clearfix" ng-repeat="msg in msgs track by $index">
+                <li class="left clearfix" ng-repeat="msg in chatCtrl.msgs track by $index">
                     <span class="chat-img1 pull-left">
                       <img src="https://s3.postimg.org/yf86x7z1r/img2.jpg"
                            alt="User Avatar" class="img-circle">
@@ -97,19 +97,19 @@
                 <label><input type="checkbox" id="typeMath">Type math</label>
             </div>
             <form enctype="multipart/form-data">
-                <button class="pull-right btn btn-primary" type="file" ng-click="showPicker()">
+                <button class="pull-right btn btn-primary" type="file" ng-click="chatCtrl.showPicker()">
                     <i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files
                 </button>
             </form>
             <div id="input-area">
-                <form ng-submit="submitMsg()">
-                    <input type="text" name="chat" ng-model="inputText"
+                <form ng-submit="chatCtrl.submitMsg()">
+                    <input type="text" name="chat" ng-model="chatCtrl.inputText"
                            class="form-control ng-pristine ng-valid input-block-level"
                            placeholder="Type a message" id="input-box">
                 </form>
                 <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
                 </div>
-                <button id="mathquill-submit" ng-click="submitMath()"></button>
+                <button id="mathquill-submit" ng-click="chatCtrl.submitMath()"></button>
             </div>
         </div>
     </div>
