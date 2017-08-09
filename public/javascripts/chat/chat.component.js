@@ -14,7 +14,7 @@ ChatWindowController.$inject = ['$scope', 'chatModel'];
 function ChatWindowController($scope, chatModel) {
   // websocket for sending chat messages
   var vm = this;
-  var ws = new WebSocket("ws://localhost:9000/chat/socket");
+  var ws = new WebSocket(getWebSocketUri("/chat/socket"));
 
   vm.rooms = chatModel.getRooms();
   vm.currentRoom = vm.rooms[0];

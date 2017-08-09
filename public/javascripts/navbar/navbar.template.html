@@ -3,14 +3,14 @@
     <div ng-init="friendCtrl = $parent.$parent.$parent.friendCtrl; r = friendCtrl.checkStatus(match.label)">
         <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
         <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
-        <span ng-if="r.status == friendCtrl.STATUSES.PENDING">
-            <button ng-if="r.actionUser == friendCtrl.username" ng-click="friendCtrl.removeFriend(match.label)" class="btn btn-primary">Cancel</button>
-            <button ng-if="r.actionUser == match.label" ng-click="friendCtrl.acceptFriend(match.label)" class="btn btn-primary">Accept</button>
+        <span ng-show="r.status == friendCtrl.STATUSES.PENDING">
+            <button ng-show="r.actionUser == friendCtrl.username" ng-click="friendCtrl.removeFriend(match.label)" class="btn btn-primary">Cancel</button>
+            <button ng-show="r.actionUser == match.label" ng-click="friendCtrl.acceptFriend(match.label)" class="btn btn-primary">Accept</button>
         </span>
-        <span ng-if="r.status == friendCtrl.STATUSES.ACCEPTED">
+        <span ng-show="r.status == friendCtrl.STATUSES.ACCEPTED">
             <button class="btn btn-primary" ng-click="friendCtrl.removeFriend(match.label)">Unfriend</button>
         </span>
-        <span ng-if="r.status != friendCtrl.STATUSES.PENDING && r.status != friendCtrl.STATUSES.ACCEPTED">
+        <span ng-show="r.status != friendCtrl.STATUSES.PENDING && r.status != friendCtrl.STATUSES.ACCEPTED">
             <button class="btn btn-primary" ng-click="friendCtrl.addFriend(match.label)">Add</button>
         </span>
     </div>
@@ -30,8 +30,8 @@
                     <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
                     <p>
                         {{ msg.sender }}
-                        <span ng-if="msg.status === friendCtrl.STATUSES.PENDING">has sent you a friend request.</span>
-                        <span ng-if="msg.status === friendCtrl.STATUSES.ACCEPTED">has accepted your friend request.</span>
+                        <span ng-show="msg.status === friendCtrl.STATUSES.PENDING">has sent you a friend request.</span>
+                        <span ng-show="msg.status === friendCtrl.STATUSES.ACCEPTED">has accepted your friend request.</span>
                     </p>
                 </li>
                 <li ng-if="friendCtrl.notifications.length == 0">

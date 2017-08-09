@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "angularjs" % "2.0.0-alpha.22"
 )
 
-herokuAppName in Compile := "blooming-beyond-34325"
+herokuAppName in Compile := "polar-beyond-71738"
 
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 

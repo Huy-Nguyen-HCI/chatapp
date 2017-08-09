@@ -43,7 +43,7 @@ function FriendRequestController ($scope, Users, Friendship, statusCodes) {
    *
    * @type {WebSocket}
    */
-  var ws = new WebSocket("ws://localhost:9000/noti/socket");
+  var ws = new WebSocket(getWebSocketUri("/noti/socket"));
 
   ws.onmessage = function (msg) {
     console.log(msg);
