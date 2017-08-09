@@ -9,6 +9,8 @@ function FriendRequestController ($scope, Users, Friendship, statusCodes) {
   var vm = this;
   var csrfToken = $('#csrf-token').text();
 
+  vm.angular = angular;
+
   vm.userList = Users.query();
   vm.username = $('#connected-user').text();
 
