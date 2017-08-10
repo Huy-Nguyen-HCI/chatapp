@@ -9,21 +9,20 @@ angular
     controllerAs: 'chatCtrl'
   });
 
-ChatWindowController.$inject = ['$scope', 'chatModel'];
+ChatWindowController.$inject = ['$scope', 'MessageData', 'ChatModel', 'CSRF_TOKEN', 'USERNAME'];
 
-function ChatWindowController($scope, chatModel) {
+function ChatWindowController($scope, MessageData, ChatModel, CSRF_TOKEN, USERNAME) {
   // websocket for sending chat messages
   var vm = this;
-  var ws = new WebSocket(getWebSocketUri("/chat/socket"));
 
-  vm.rooms = chatModel.getRooms();
+  vm.rooms = ChatModel.getRooms();
   vm.currentRoom = vm.rooms[0];
 
-  vm.msgs = [];
+  vm.MessageData = MessageData;
   vm.inputText = "";
 
-  vm.user = $('#connected-user').text();
-  vm.csrfToken = $("#csrf-token").text();
+  vm.user = USERNAME;
+  vm.csrfToken = CSRF_TOKEN;
   vm.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
 
   angular.element(document).ready(function () {
@@ -37,7 +36,7 @@ function ChatWindowController($scope, chatModel) {
   /** change current room, restart EventSource connection */
   vm.setCurrentRoom = function (room) {
     vm.currentRoom = room;
-    vm.msgs = [];
+    vm.MessageData.msgs = [];
   };
 
   /** re-render the page whenever any model is updated **/
@@ -57,17 +56,16 @@ function ChatWindowController($scope, chatModel) {
     if (!isInputValid(inputText)) return;
 
     var sendData = {text: inputText};
-    vm.msgs.push(sendData);
-    ws.send(JSON.stringify(sendData));
+    vm.MessageData.msgs.push(sendData);
+    vm.MessageData.send(sendData);
 
     vm.inputText = "";
   };
 
-  ws.onmessage = function (msg) {
-    vm.msgs.push(JSON.parse(msg.data));
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    $scope.$digest();
-  };
+  // ws.onMessage = function (msg) {
+  //   vm.msgs.push(JSON.parse(msg.data));
+  //   MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+  // };
 
   /** posting math formula */
   vm.submitMath = function() {

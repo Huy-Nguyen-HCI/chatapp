@@ -1,8 +1,12 @@
 @()(implicit request: RequestHeader, messages: Messages, session: Session)
 
 @import play.filters.csrf.CSRF
+@import models.Friendship
+
 @token = @{ CSRF.getToken.get }
 @username = @{ request.session.get("connected") }
+@STATUS_CODES = @{ Friendship.getStatusJsonString }
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,6 +27,7 @@
   <body ng-app="socketChat">
     <div id="csrf-token" style="display: none;">@token.value</div>
     <div id="connected-user" style="display: none;">@username</div>
+    <div id="friendship-status-codes" style="display: none;">@STATUS_CODES</div>
 
     <div class="main-section">
       <div class="container">
@@ -60,7 +65,6 @@
     <script src="https://cdn.rawgit.com/AngularClass/angular-websocket/v2.0.0/dist/angular-websocket.js"></script>
     <script src='@routes.Assets.versioned("ng-embed/dist/ng-embed.min.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/core/utils/ws-helper.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/core/controllers/friend-request.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/app.module.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/user-list/user-list.js")'></script>
     <script src='@routes.Assets.versioned("javascripts/chat/chat.module.js")'></script>

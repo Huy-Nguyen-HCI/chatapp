@@ -3,18 +3,18 @@ package api
 import javax.inject.Inject
 
 import dao.{FriendshipDao, UserDao}
-import models.FriendshipStatusCode
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 import controllers.USERNAME_KEY
+import models.Friendship
 
 /**
   * Created by thang on 6/22/17.
   */
-class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, friendshipCode: FriendshipStatusCode)
+class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
                               (implicit executionContext: ExecutionContext)
                     extends Controller {
 
@@ -35,12 +35,12 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, f
       } yield (s, r, f)
 
       res flatMap {
-        case (s, r, Some(f)) if f == (friendshipCode.BLOCKED, r) ||
-                                      f._1 == friendshipCode.PENDING ||
-                                      f._2 == friendshipCode.ACCEPTED =>
+        case (s, r, Some(f)) if f == (Friendship.BLOCKED, r) ||
+                                      f._1 == Friendship.PENDING ||
+                                      f._2 == Friendship.ACCEPTED =>
           Future.successful(BadRequest("Cannot send friend request"))
         case (s, r, _) =>
-          friendshipDao.insertOrUpdateFriendship(s, r, friendshipCode.PENDING).map(_ => Ok("Request sent"))
+          friendshipDao.insertOrUpdateFriendship(s, r, Friendship.PENDING).map(_ => Ok("Request sent"))
       }
 
     }
@@ -60,8 +60,8 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, f
 
       res flatMap {
         // match if there is an actual pending request from the receiver
-        case (s, r, Some(f)) if f == (friendshipCode.PENDING, r) =>
-          friendshipDao.insertOrUpdateFriendship(s, r, friendshipCode.ACCEPTED).map(_ => Ok("Request sent"))
+        case (s, r, Some(f)) if f == (Friendship.PENDING, r) =>
+          friendshipDao.insertOrUpdateFriendship(s, r, Friendship.ACCEPTED).map(_ => Ok("Request sent"))
         case _ =>
           Future.successful(BadRequest("Cannot accept friend request"))
       }
@@ -118,7 +118,7 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao, f
           Ok(Json.parse(s""" {"status": ${friendship.get._1}, "actionUser": "$actionUser"} """))
         }
         else
-          Ok(Json.obj())
+          Ok(Json.parse(""" {"status": -1} """))
       }
     }
   }

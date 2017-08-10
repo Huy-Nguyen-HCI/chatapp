@@ -21,6 +21,9 @@ class ChatController @Inject()(val messagesApi: MessagesApi)
   }
 
   def index = Action { implicit request =>
-    Ok(views.html.chat())
+    if (request.session.get(USERNAME_KEY).isEmpty)
+      Redirect("/")
+    else
+      Ok(views.html.chat())
   }
 }

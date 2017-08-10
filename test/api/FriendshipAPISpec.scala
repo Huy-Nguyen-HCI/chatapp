@@ -2,7 +2,6 @@ package api
 
 import dao.FriendshipDao
 import helpers.{CSRFTest, CachedInject}
-import models.FriendshipStatusCode
 import org.scalatest.BeforeAndAfter
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -16,6 +15,7 @@ import play.api.test.Helpers.{GET => GET_REQUEST, POST => POST_REQUEST, _}
 import scala.concurrent.ExecutionContext
 import com.github.t3hnar.bcrypt._
 import controllers.USERNAME_KEY
+import models.Friendship
 
 
 /**
@@ -25,7 +25,6 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
     with CachedInject with CSRFTest {
 
   private val db = getInstance[DBApi].database("default")
-  private val friendshipCode = getInstance[FriendshipStatusCode]
 
   before {
     Evolutions.applyEvolutions(db)
@@ -36,7 +35,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
         s"INSERT INTO user VALUES (2, 'bob', '${"bob".bcrypt}', 'bob@gmail.com');" +
         "INSERT INTO user VALUES (3, 'charlie', 'charlie', 'charlie@gmail.com');" +
         "INSERT INTO user VALUES (4, 'daisy', 'daisy', 'daisy@gmail.com');" +
-        s"INSERT INTO friendship VALUES (1, 3, ${friendshipCode.BLOCKED}, 3);"
+        s"INSERT INTO friendship VALUES (1, 3, ${Friendship.BLOCKED}, 3);"
       )
     ))
   }
@@ -76,7 +75,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
       // check value in db
       friendshipDao.getFriendship(1, 2).map { res =>
-        res.get mustEqual (friendshipCode.PENDING, 1)
+        res.get mustEqual (Friendship.PENDING, 1)
       }
 
       // cannot request friend when blocked
@@ -94,7 +93,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
 
     "be able to accept friend request" in {
-      await(friendshipDao.insertOrUpdateFriendship(1, 2, friendshipCode.PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(1, 2, Friendship.PENDING))
       val apiUrl = "/api/friend/accept"
       var json = """{"sender":"bob", "receiver":"ann"}"""
 
@@ -103,7 +102,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
       // check value in db
       friendshipDao.getFriendship(1, 2).map { res =>
-        res.get mustEqual (friendshipCode.ACCEPTED, 2)
+        res.get mustEqual (Friendship.ACCEPTED, 2)
       }
 
       // cannot accept if there is no pending friend request
@@ -112,10 +111,10 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
 
     "be able to list all pending requests" in {
-      await(friendshipDao.insertOrUpdateFriendship(2, 1, friendshipCode.PENDING))
-      await(friendshipDao.insertOrUpdateFriendship(4, 1, friendshipCode.PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(2, 1, Friendship.PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(4, 1, Friendship.PENDING))
 
-      var request = FakeRequest(GET_REQUEST, s"/api/friend/search?username=ann&status=${friendshipCode.PENDING}")
+      var request = FakeRequest(GET_REQUEST, s"/api/friend/search?username=ann&status=${Friendship.PENDING}")
         .withHeaders("Host" -> "localhost")
 
       var result = route(app, request).get
@@ -135,7 +134,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
 
     "be able to remove friendship" in {
-      await(friendshipDao.insertOrUpdateFriendship(2, 1, friendshipCode.PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(2, 1, Friendship.PENDING))
 
       val json = """{"sender":"ann", "receiver":"bob"}"""
       val result = apiPostRequest("/api/friend/remove", json, "ann")
@@ -147,7 +146,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
 
     "be able to check friendship status" in {
-      await(friendshipDao.insertOrUpdateFriendship(2, 1, friendshipCode.PENDING))
+      await(friendshipDao.insertOrUpdateFriendship(2, 1, Friendship.PENDING))
 
       var request = FakeRequest(GET_REQUEST, "/api/friend/check?first=ann&second=bob")
                       .withHeaders("Host" -> "localhost")
@@ -163,7 +162,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
 
       // check content
       val json = contentAsJson(result)
-      (json \ "status").as[Int] mustBe friendshipCode.PENDING
+      (json \ "status").as[Int] mustBe Friendship.PENDING
       (json \ "actionUser").as[String] mustBe "bob"
     }
   }
