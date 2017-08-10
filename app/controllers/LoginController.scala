@@ -28,10 +28,19 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
     )(UserLoginData.apply)(UserLoginData.unapply)
   )
 
-  def index = Action { implicit request =>
-    request.session.get(USERNAME_KEY) match {
-      case None => Ok(views.html.login(userForm))
-      case Some(_) => Redirect(routes.ChatController.index())
+  def index = Action.async { implicit request =>
+    val user = request.session.get(USERNAME_KEY)
+
+    if (user.isDefined) {
+      // check if user exists in database
+      val query = userDao.findByUsername(user.get)
+
+      query map {
+        case Some(_) => Redirect(routes.ChatController.index())
+        case None => Ok(views.html.login(userForm)).withSession(request.session - USERNAME_KEY)
+      }
+    } else {
+      Future.successful(Ok(views.html.login(userForm)))
     }
   }
 
