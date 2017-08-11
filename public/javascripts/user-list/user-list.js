@@ -19,7 +19,7 @@ userListModule.factory('friendRequestHandler', friendRequestHandlerFactory);
 friendRequestHandlerFactory.$inject = ['$websocket', 'Friendship', 'CSRF_TOKEN', 'USERNAME', 'STATUS_CODES'];
 
 function friendRequestHandlerFactory ($websocket, Friendship, CSRF_TOKEN, USERNAME, STATUS_CODES) {
-
+  console.log("here");
   var notifications = [];
 
   var ws = $websocket(getWebSocketUri("/noti/socket"));
@@ -28,6 +28,10 @@ function friendRequestHandlerFactory ($websocket, Friendship, CSRF_TOKEN, USERNA
     console.log(msg);
     var data = JSON.parse(msg.data);
     notifications.unshift({sender: data.sender, status: data.status});
+  });
+
+  ws.onClose(function (msg) {
+    console.log("noti websocket is close");
   });
 
   // functions for handling friend requests

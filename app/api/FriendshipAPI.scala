@@ -124,9 +124,6 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
   }
 
 
-  /*
-   * Action composition that authenticates the login user.
-   */
   case class SessionAuthenticated[A](username: String)(action: Action[A]) extends Action[A] {
 
     def apply(request: Request[A]): Future[Result] = {

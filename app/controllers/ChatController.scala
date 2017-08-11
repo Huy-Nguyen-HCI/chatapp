@@ -1,29 +1,23 @@
 package controllers
-
 import javax.inject.{Inject, Singleton}
 
-import akka.actor.{ActorSystem, Props}
-import play.api.mvc._
-import actors._
-import akka.stream.Materializer
+import dao.UserDao
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.streams.ActorFlow
+import play.api.mvc._
 
+import scala.concurrent.{ExecutionContext, Future}
+
+/**
+  * Created by thangle on 8/10/17.
+  */
 @Singleton
-class ChatController @Inject()(val messagesApi: MessagesApi)
-                              (implicit actorSystem: ActorSystem, materializer: Materializer)
-  extends Controller with I18nSupport {
+class ChatController @Inject() (val messagesApi: MessagesApi)
+                               (implicit val userDao: UserDao, executionContext: ExecutionContext)
+      extends Controller with I18nSupport {
 
-  val chat = actorSystem.actorOf(Props[Chat], "chat")
-
-  def socket = WebSocket.accept[String, String] { implicit request =>
-    ActorFlow.actorRef(out => Props(new ChatClientActor(out, chat)))
-  }
-
-  def index = Action { implicit request =>
-    if (request.session.get(USERNAME_KEY).isEmpty)
-      Redirect("/")
-    else
-      Ok(views.html.chat())
+  def index = UserAuthenticated {
+    Action.async { implicit request =>
+      Future.successful(Ok(views.html.chat()))
+    }
   }
 }

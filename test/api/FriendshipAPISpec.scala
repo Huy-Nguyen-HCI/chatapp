@@ -1,7 +1,7 @@
 package api
 
 import dao.FriendshipDao
-import helpers.{CSRFTest, CachedInject}
+import helpers.{CSRFPostTest, CachedInject}
 import org.scalatest.BeforeAndAfter
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -22,7 +22,7 @@ import models.Friendship
   * Created by thang on 6/25/17.
   */
 class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter
-    with CachedInject with CSRFTest {
+    with CachedInject with CSRFPostTest {
 
   private val db = getInstance[DBApi].database("default")
 
@@ -52,7 +52,7 @@ class FriendshipAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAnd
     def apiPostRequest(url: String, json: String, username: String = "")
                       (implicit app: Application) = {
 
-      val request = addToken(FakeRequest(
+      val request = addPostToken(FakeRequest(
           method = POST_REQUEST,
           path = url
         )

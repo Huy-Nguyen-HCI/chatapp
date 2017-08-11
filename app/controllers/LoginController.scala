@@ -1,6 +1,6 @@
 package controllers
 
-import javax.inject.Inject
+import javax.inject.{Singleton, Inject}
 
 import play.api.mvc._
 import play.api.data._
@@ -17,6 +17,7 @@ import com.github.t3hnar.bcrypt._
 /**
   * Handles logging in and creating accounts
   */
+@Singleton
 class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
                                 (implicit executionContext: ExecutionContext)
       extends Controller with I18nSupport {
@@ -37,7 +38,7 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
 
       query map {
         case Some(_) => Redirect(routes.ChatController.index())
-        case None => Ok(views.html.login(userForm)).withSession(request.session - USERNAME_KEY)
+        case None => Redirect(routes.LoginController.index()).withSession(request.session - USERNAME_KEY)
       }
     } else {
       Future.successful(Ok(views.html.login(userForm)))
@@ -47,7 +48,7 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
   def login = Action.async { implicit request =>
     userForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.login(errorForm)))
+        Future.successful(Ok(views.html.login(errorForm)).flashing("error" -> "some required fields are empty"))
       },
 
       userLogin => {
@@ -58,19 +59,19 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
         val query = userDao.findByUsername(username)
         query map {
           case Some(user) if password.isBcrypted(user.password) =>
-            Redirect("/").withSession(USERNAME_KEY -> username)
+            Redirect(routes.ChatController.index()).withSession(USERNAME_KEY -> username)
 
           case _ =>
-            val formWithErrors = userForm.withGlobalError("incorrect username or password")
-            Ok(views.html.login(formWithErrors))
+            val errorMsg = "incorrect username or password"
+            val formWithErrors = userForm.withGlobalError(errorMsg)
+            Ok(views.html.login(formWithErrors)).flashing("error" -> errorMsg)
         }
       }
     )
-
   }
 
   def logout = Action { implicit request =>
-    Redirect("/").withNewSession
+    Redirect(routes.HomeController.index()).withNewSession
   }
 }
 

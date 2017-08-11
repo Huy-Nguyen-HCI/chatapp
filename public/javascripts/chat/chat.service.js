@@ -23,6 +23,10 @@ chatModule.service('MessageData', ['$websocket', function($websocket) {
     msgs.push(JSON.parse(message.data));
   });
 
+  ws.onClose(function() {
+    console.log("chat websocket is close");
+  });
+
   return  {
     msgs: msgs,
     send: function(json) {

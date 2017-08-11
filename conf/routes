@@ -4,17 +4,18 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.LoginController.index
+GET     /                           controllers.HomeController.index
 
+GET     /login                      controllers.LoginController.index
 POST    /login                      controllers.LoginController.login
+
 GET     /logout                     controllers.LoginController.logout
 
 GET     /signup                     controllers.SignupController.index
 POST    /signup                     controllers.SignupController.signup
 
 GET     /chat                       controllers.ChatController.index
-GET     /chat/socket                controllers.ChatController.socket
-GET     /noti/socket                controllers.NotificationController.socket
+GET     /chat/socket                controllers.SocketController.socket
 
 POST    /upload                     controllers.FileController.upload
 
