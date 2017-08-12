@@ -13,24 +13,3 @@ chatModule.service('ChatModel', function () {
   return { getRooms: getRooms };
 });
 
-
-chatModule.service('MessageData', ['$websocket', function($websocket) {
-  var ws = $websocket(getWebSocketUri("/chat/socket"));
-
-  var msgs = [];
-
-  ws.onMessage(function(message) {
-    msgs.push(JSON.parse(message.data));
-  });
-
-  ws.onClose(function() {
-    console.log("chat websocket is close");
-  });
-
-  return  {
-    msgs: msgs,
-    send: function(json) {
-      ws.send(JSON.stringify(json));
-    }
-  };
-}]);

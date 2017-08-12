@@ -1,17 +1,17 @@
 <!-- Angular UI templates -->
 <script type="text/ng-template" id="userDisplay.html">
-    <div ng-init="friendCtrl = $parent.$parent.$parent.friendCtrl; r = friendCtrl.friendRequestHandler.checkStatus(match.label)">
+    <div ng-init="friendCtrl = $parent.$parent.$parent.friendCtrl; r = friendCtrl.Notification.checkStatus(match.label)">
         <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
         <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
         <span ng-if="r.status == friendCtrl.STATUS_CODES.PENDING">
-            <button ng-if="r.actionUser == friendCtrl.username" ng-click="friendCtrl.friendRequestHandler.removeFriend(match.label)" class="btn btn-primary">Cancel</button>
-            <button ng-if="r.actionUser == match.label" ng-click="friendCtrl.friendRequestHandler.acceptFriend(match.label)" class="btn btn-primary">Accept</button>
+            <button ng-if="r.actionUser == friendCtrl.username" ng-click="friendCtrl.Notification.removeFriend(match.label)" class="btn btn-primary">Cancel</button>
+            <button ng-if="r.actionUser == match.label" ng-click="friendCtrl.Notification.acceptFriend(match.label)" class="btn btn-primary">Accept</button>
         </span>
         <span ng-if="r.status == friendCtrl.STATUS_CODES.ACCEPTED">
-            <button class="btn btn-primary" ng-click="friendCtrl.friendRequestHandler.removeFriend(match.label)">Unfriend</button>
+            <button class="btn btn-primary" ng-click="friendCtrl.Notification.removeFriend(match.label)">Unfriend</button>
         </span>
         <span ng-if="!friendCtrl.angular.equals(r, {}) && r.status != friendCtrl.STATUS_CODES.PENDING && r.status != friendCtrl.STATUS_CODES.ACCEPTED">
-            <button class="btn btn-primary" ng-click="friendCtrl.friendRequestHandler.addFriend(match.label)">Add</button>
+            <button class="btn btn-primary" ng-click="friendCtrl.Notification.addFriend(match.label)">Add</button>
         </span>
     </div>
 </script>
@@ -26,7 +26,7 @@
             <a class="dropdown-toggle" data-toggle="dropdown">Notifications
                 <span class="caret"></span></a>
             <ul class="dropdown-menu dropdown-notification">
-                <li ng-if="friendCtrl.friendRequestHandler.notifications.length > 0" ng-repeat="msg in friendCtrl.friendRequestHandler.notifications">
+                <li ng-if="friendCtrl.Notification.notifications.length > 0" ng-repeat="msg in friendCtrl.Notification.notifications">
                     <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
                     <p>
                         <b>{{ msg.sender }}</b>
@@ -34,7 +34,7 @@
                         <span ng-if="msg.status === friendCtrl.STATUS_CODES.ACCEPTED">has accepted your friend request.</span>
                     </p>
                 </li>
-                <li ng-if="friendCtrl.friendRequestHandler.notifications.length == 0">
+                <li ng-if="friendCtrl.Notification.notifications.length == 0">
                     <p>There isn't any notification.</p>
                 </li>
             </ul>

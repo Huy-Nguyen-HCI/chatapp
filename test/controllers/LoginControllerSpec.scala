@@ -40,7 +40,7 @@ class LoginControllerSpec extends PlaySpec with Results with GuiceOneAppPerSuite
     Evolutions.cleanupEvolutions(db)
   }
 
-  "LoginController#index" must {
+  "LoginController#index" should {
 
     "be valid" in {
       val action = addToken(controller.index())
@@ -60,12 +60,12 @@ class LoginControllerSpec extends PlaySpec with Results with GuiceOneAppPerSuite
       val action = addToken(controller.index())
       val result = action(FakeRequest().withSession(USERNAME_KEY -> "bob"))
 
-      redirectLocation(result) mustBe Some(routes.LoginController.index().url)
+      status(result) mustBe OK
       session(result).get(USERNAME_KEY) mustBe empty
     }
   }
 
-  "LoginController#login" must {
+  "LoginController#login" should {
 
     def requestWithFormData(username: String, password: String) =
       FakeRequest(POST_REQUEST, routes.LoginController.login().url)
@@ -89,7 +89,7 @@ class LoginControllerSpec extends PlaySpec with Results with GuiceOneAppPerSuite
     }
   }
 
-  "LoginController#logout" must {
+  "LoginController#logout" should {
 
     "let user logout" in {
       val result = controller.logout().apply(FakeRequest())

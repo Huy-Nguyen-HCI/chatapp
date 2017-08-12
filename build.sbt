@@ -12,6 +12,7 @@ lazy val akkaVersion = "2.4.11"
 libraryDependencies ++= Seq(
   filters,
   "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % Test,
+  "org.java-websocket" % "Java-WebSocket" % "1.3.4" % Test,
   "com.typesafe.akka" %% "akka-http-core" % akkaVersion,
   "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,

@@ -37,8 +37,12 @@ class LoginController @Inject() (val messagesApi: MessagesApi, userDao: UserDao)
       val query = userDao.findByUsername(user.get)
 
       query map {
-        case Some(_) => Redirect(routes.ChatController.index())
-        case None => Redirect(routes.LoginController.index()).withSession(request.session - USERNAME_KEY)
+        case Some(_) =>
+          Redirect(routes.ChatController.index())
+
+        case None =>
+          val newSession = request.session - USERNAME_KEY
+          Ok(views.html.login(userForm)(implicitly, implicitly, newSession)).withSession(newSession)
       }
     } else {
       Future.successful(Ok(views.html.login(userForm)))

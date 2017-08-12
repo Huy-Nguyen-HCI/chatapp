@@ -15,7 +15,7 @@ GET     /signup                     controllers.SignupController.index
 POST    /signup                     controllers.SignupController.signup
 
 GET     /chat                       controllers.ChatController.index
-GET     /chat/socket                controllers.SocketController.socket
+GET     /socket                     controllers.SocketController.socket
 
 POST    /upload                     controllers.FileController.upload
 

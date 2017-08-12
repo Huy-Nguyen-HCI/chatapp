@@ -31,10 +31,23 @@ class SignupController @Inject() (val messagesApi: MessagesApi, userDao: UserDao
     )(UserSignupData.apply)(UserSignupData.unapply)
   )
 
-  def index = Action { implicit request =>
-    request.session.get(USERNAME_KEY) match {
-      case None => Ok(views.html.signup(userForm))
-      case Some(_) => Redirect(routes.ChatController.index())
+  def index = Action.async { implicit request =>
+    val user = request.session.get(USERNAME_KEY)
+
+    if (user.isDefined) {
+      // check if user exists in database
+      val query = userDao.findByUsername(user.get)
+
+      query map {
+        case Some(_) =>
+          Redirect(routes.ChatController.index())
+
+        case None =>
+          val newSession = request.session - USERNAME_KEY
+          Ok(views.html.signup(userForm)(implicitly, implicitly, newSession)).withSession(newSession)
+      }
+    } else {
+      Future.successful(Ok(views.html.signup(userForm)))
     }
   }
 
