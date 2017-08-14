@@ -9,9 +9,9 @@
       controllerAs: 'chatCtrl'
     });
 
-  ChatWindowController.$inject = ['$scope', 'WebSocketData', 'ChatModel', 'CSRF_TOKEN', 'USERNAME'];
+  ChatWindowController.$inject = ['$scope', 'webSocketFactory', 'ChatModel', 'CSRF_TOKEN', 'USERNAME'];
 
-  function ChatWindowController($scope, WebSocketData, ChatModel, CSRF_TOKEN, USERNAME) {
+  function ChatWindowController($scope, webSocketFactory, ChatModel, CSRF_TOKEN, USERNAME) {
     var vm = this;
 
     // pre-loaded constants
@@ -23,7 +23,7 @@
     vm.currentRoom = vm.rooms[0];
 
     // chat message data communicated between the users
-    vm.MessageData = WebSocketData.Chat;
+    vm.MessageData = webSocketFactory.Chat;
     vm.inputText = "";
 
     vm.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
@@ -54,8 +54,8 @@
       var inputText = vm.inputText;
       if (!isInputValid(inputText)) return;
 
-      var sendData = {type: "chat-message", sender: USERNAME, text: inputText};
-      vm.MessageData.chatMessages.push(sendData);
+      var sendData = {sender: USERNAME, text: inputText};
+      vm.MessageData.addMessage(sendData);
       vm.MessageData.send(sendData);
 
       vm.inputText = "";
