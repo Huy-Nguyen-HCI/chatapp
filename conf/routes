@@ -19,6 +19,8 @@ GET     /socket                     controllers.SocketController.socket
 
 POST    /upload                     controllers.FileController.upload
 
+GET     /user/:username             controllers.UserDetailController.index(username)
+
 ->      /api/users                  api.UserRouter
 ->      /api/friend                 api.FriendshipRouter
 

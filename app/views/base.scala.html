@@ -1,0 +1,15 @@
+@(headTags: Html= Html(""), scripts: Html = Html(""))(content: Html)
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    @headTags
+  </head>
+  <body>
+    @* And here's where we render the `Html` object containing
+    * the page content. *@
+    @content
+
+    @scripts
+  </body>
+</html>

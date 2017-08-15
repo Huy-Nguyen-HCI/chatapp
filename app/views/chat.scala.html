@@ -7,77 +7,75 @@
 @username = @{ request.session.get("connected") }
 @STATUS_CODES = @{ Friendship.getStatusJsonString }
 
+@headerTags = {
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href='@routes.Assets.versioned("lib/bootstrap/dist/css/bootstrap.min.css")'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.css">
+  <link rel="stylesheet" href='@routes.Assets.versioned("ng-embed/dist/ng-embed.min.css")'>
+  <link rel="stylesheet" media="screen" href='@routes.Assets.versioned("stylesheets/chat.css")'>
+  <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/keyboard.css")'>
+  <link rel="shortcut icon" type="image/png" href='@routes.Assets.versioned("images/favicon.png")'>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Chat Room</title>
+}
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href='@routes.Assets.versioned("lib/bootstrap/dist/css/bootstrap.min.css")'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.css">
-    <link rel="stylesheet" href='@routes.Assets.versioned("ng-embed/dist/ng-embed.min.css")'>
-    <link rel="stylesheet" media="screen" href='@routes.Assets.versioned("stylesheets/chat.css")'>
-    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/keyboard.css")'>
-    <link rel="shortcut icon" type="image/png" href='@routes.Assets.versioned("images/favicon.png")'>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <title>Chat Room</title>
-  </head>
+@scripts = {
+    <!-- External libraries -->
+  <script src="https://use.fontawesome.com/baccb63e5b.js"></script>
+  <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.min.js")'></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.js"></script>
+  <script type="text/javascript" src="https://static.filestackapi.com/v3/filestack.js"></script>
+  <script type='text/javascript' src='@routes.Assets.versioned("lib/bootstrap/dist/js/bootstrap.min.js")'></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script type='text/javascript' src='@routes.Assets.versioned("javascripts/app/lib/eventsource.js")'></script>
+  <script type='text/javascript' src='@routes.Assets.versioned("javascripts/app/lib/notify.min.js")'></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/virtual-keyboard/1.26.18/js/jquery.keyboard.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0-rc.2/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+  <script src="https://platform.twitter.com/widgets.js"></script>
 
-  <body ng-app="socketChat">
-    <div id="csrf-token" style="display: none;">@token.value</div>
-    <div id="connected-user" style="display: none;">@username</div>
+
+    <!-- Angular -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.6.5/angular-sanitize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-resource.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
+  <script src="https://cdn.rawgit.com/AngularClass/angular-websocket/v2.0.0/dist/angular-websocket.js"></script>
+  <script src='@routes.Assets.versioned("ng-embed/dist/ng-embed.min.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/utils/ws-helper.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/utils/hashset.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/app.module.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/core.module.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/data-services/startwith.filter.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/data-services/websocket.factory.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/data-services/user.factory.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/data-services/friend.factory.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/friend-button/friend-button.component.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/chat/chat.module.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/chat/chat.component.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/chat/chat.directive.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/chat/chat.service.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/navbar/navbar.module.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/navbar/navbar.component.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/main.js")'></script>
+}
+
+@base(headerTags, scripts) {
+  <div ng-app="socketChat">
     <div id="friendship-status-codes" style="display: none;">@STATUS_CODES</div>
 
     <div class="main-section">
       <div class="container">
         <nav class="navbar navbar-inverse">
-          <nav-bar></nav-bar>
+          <nav-bar username="@username" csrf-token="@token.value"></nav-bar>
         </nav>
         <div class="chat-container">
-          <chat-window></chat-window>
+          <chat-window username="@username"></chat-window>
         </div>
       </div>
     </div>
-
     @keyboard()
-
-      <!-- External libraries -->
-    <script src="https://use.fontawesome.com/baccb63e5b.js"></script>
-    <script type='text/javascript' src='@routes.Assets.versioned("lib/jquery/jquery.min.js")'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.js"></script>
-    <script type="text/javascript" src="https://static.filestackapi.com/v3/filestack.js"></script>
-    <script type='text/javascript' src='@routes.Assets.versioned("lib/bootstrap/dist/js/bootstrap.min.js")'></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML"></script>
-    <script type='text/javascript' src='@routes.Assets.versioned("javascripts/app/lib/eventsource.js")'></script>
-    <script type='text/javascript' src='@routes.Assets.versioned("javascripts/app/lib/notify.min.js")'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/virtual-keyboard/1.26.18/js/jquery.keyboard.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.0-rc.2/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
-    <script src="https://platform.twitter.com/widgets.js"></script>
-
-
-      <!-- Angular -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.6.5/angular-sanitize.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-resource.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
-    <script src="https://cdn.rawgit.com/AngularClass/angular-websocket/v2.0.0/dist/angular-websocket.js"></script>
-    <script src='@routes.Assets.versioned("ng-embed/dist/ng-embed.min.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/utils/ws-helper.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/app.module.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/core/core.module.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/core/websocket.factory.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/core/user.factory.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/core/friend.factory.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/chat/chat.module.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/chat/chat.component.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/chat/chat.directive.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/chat/chat.service.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/navbar/navbar.module.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/app/navbar/navbar.component.js")'></script>
-    <script src='@routes.Assets.versioned("javascripts/main.js")'></script>
-
-  </body>
-
-</html>
+  </div>
+}

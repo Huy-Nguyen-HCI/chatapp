@@ -5,7 +5,7 @@
   'use strict';
 
   angular
-    .module('app.core')
+    .module('core')
     .factory('webSocketFactory', webSocketFactory);
 
   webSocketFactory.$inject = ['$websocket'];

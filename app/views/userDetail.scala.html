@@ -1,0 +1,40 @@
+@(user: User)(implicit request: RequestHeader, session: Session)
+
+@import play.filters.csrf.CSRF
+@import models.Friendship
+
+@token = @{ CSRF.getToken.get }
+@username = @{ request.session.get("connected") }
+@STATUS_CODES = @{ Friendship.getStatusJsonString }
+
+@scripts = {
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-resource.min.js"></script>
+  <script src="https://cdn.rawgit.com/AngularClass/angular-websocket/v2.0.0/dist/angular-websocket.js"></script>
+  <script src='@routes.Assets.versioned("javascripts/utils/ws-helper.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/utils/hashset.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/core.module.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/data-services/websocket.factory.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/data-services/user.factory.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/data-services/friend.factory.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/core/friend-button/friend-button.component.js")'></script>
+}
+
+@main("User detail page", scripts = scripts) {
+  <div ng-app="core">
+    <div id="csrf-token" style="display: none;">@token.value</div>
+    <div id="connected-user" style="display: none;">@username</div>
+    <div id="friendship-status-codes" style="display: none;">@STATUS_CODES</div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <img src='@routes.Assets.versioned("images/pikachu.png")' alt="avatar" class="img-responsive">
+      </div>
+      <div class="col-md-8">
+        <div>Username: @user.username</div>
+        <div>Email: @user.email</div>
+      </div>
+    </div>
+  </div>
+
+}

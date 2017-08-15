@@ -1,0 +1,13 @@
+<span ng-if="$ctrl.relationship.status == $ctrl.STATUS_CODES.PENDING">
+    <button ng-if="$ctrl.relationship.actionUser == $ctrl.username"
+            ng-click="$ctrl.removeFriend($ctrl.otherUser)" class="btn btn-primary">Cancel</button>
+    <button ng-if="$ctrl.relationship.actionUser == $ctrl.otherUser"
+            ng-click="$ctrl.acceptFriend($ctrl.otherUser)" class="btn btn-primary">Accept</button>
+</span>
+<span ng-if="$ctrl.relationship.status == $ctrl.STATUS_CODES.ACCEPTED">
+    <button class="btn btn-primary" ng-click="$ctrl.removeFriend($ctrl.otherUser)">Remove</button>
+</span>
+<span ng-if="!$ctrl.angular.equals($ctrl.relationship, {}) && $ctrl.relationship.status != $ctrl.STATUS_CODES.PENDING &&
+             $ctrl.relationship.status != $ctrl.STATUS_CODES.ACCEPTED">
+    <button class="btn btn-primary" ng-click="$ctrl.addFriend($ctrl.otherUser)">Add</button>
+</span>
