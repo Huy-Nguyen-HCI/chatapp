@@ -17,9 +17,9 @@
     });
 
 
-  FriendButtonController.$inject = ['friendFactory', 'STATUS_CODES'];
+  FriendButtonController.$inject = ['friendFactory', 'webSocketFactory', 'STATUS_CODES'];
 
-  function FriendButtonController (friendFactory, STATUS_CODES) {
+  function FriendButtonController (friendFactory, webSocketFactory, STATUS_CODES) {
     var vm = this;
 
     vm.STATUS_CODES = STATUS_CODES;
@@ -33,16 +33,35 @@
       vm.relationship = friendFactory.checkStatus(vm.username, vm.otherUser);
     };
 
+    function sendRequest (action) {
+      var actionToStatus = {
+        'add': STATUS_CODES.PENDING,
+        'accept': STATUS_CODES.ACCEPTED
+      };
+      var promise = friendFactory.sendRequest(action, vm.username, vm.otherUser, vm.csrfToken);
+      promise.then(function() {
+        if (action !== 'remove') {
+          var json = { sender: vm.username, receiver: vm.otherUser , status:  actionToStatus[action] };
+          webSocketFactory.Notification.send(json);
+        }
+        vm.relationship = friendFactory.checkStatus(vm.username, vm.otherUser);
+      }, function(error) {
+        // recheck the status
+        vm.relationship = friendFactory.checkStatus(vm.username, vm.otherUser);
+        console.log(error);
+      });
+    }
+
     function addFriend () {
-      friendFactory.addFriend(vm.username, vm.otherUser, vm.csrfToken);
+      sendRequest('add');
     }
 
     function acceptFriend () {
-      friendFactory.acceptFriend(vm.username, vm.otherUser, vm.csrfToken);
+      sendRequest('accept');
     }
 
     function removeFriend () {
-      friendFactory.removeFriend(vm.username, vm.otherUser, vm.csrfToken);
+      sendRequest('remove');
     }
   }
 })();

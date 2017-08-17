@@ -17,7 +17,7 @@
             <a class="dropdown-toggle" data-toggle="dropdown">Notifications
                 <span class="caret"></span></a>
             <ul class="dropdown-menu dropdown-notification">
-                <li ng-if="navBarCtrl.Friend.notifications.length > 0" ng-repeat="msg in navBarCtrl.Friend.notifications">
+                <li ng-if="navBarCtrl.Notification.notifications.length > 0" ng-repeat="msg in navBarCtrl.Notification.notifications">
                     <img class="user-img" src="https://s3.postimg.org/yf86x7z1r/img2.jpg" alt="">
                     <p>
                         <b>{{ msg.sender }}</b>
@@ -25,7 +25,7 @@
                         <span ng-if="msg.status === navBarCtrl.statusCodes.ACCEPTED">has accepted your friend request.</span>
                     </p>
                 </li>
-                <li ng-if="navBarCtrl.Friend.notifications.length == 0">
+                <li ng-if="navBarCtrl.Notification.notifications.length == 0">
                     <p>There isn't any notification.</p>
                 </li>
             </ul>
@@ -45,6 +45,7 @@
         </div>
     </form>
     <ul class="nav navbar-nav navbar-right">
+        <li><a href="/user/{{ navBarCtrl.username }}"><span class="glyphicon glyphicon-user"></span> Your profile</a></li>
         <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
     </ul>
 </div>

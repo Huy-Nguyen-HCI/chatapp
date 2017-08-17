@@ -22,19 +22,32 @@
 
 @main("User detail page", scripts = scripts) {
   <div ng-app="core">
-    <div id="csrf-token" style="display: none;">@token.value</div>
-    <div id="connected-user" style="display: none;">@username</div>
     <div id="friendship-status-codes" style="display: none;">@STATUS_CODES</div>
-
-    <div class="row">
-      <div class="col-md-4">
-        <img src='@routes.Assets.versioned("images/pikachu.png")' alt="avatar" class="img-responsive">
-      </div>
-      <div class="col-md-8">
-        <div>Username: @user.username</div>
-        <div>Email: @user.email</div>
+    <div class="row" style="margin-top: 50px">
+      <div class="col-md-3" style="border: 3px solid black"><img class="img-responsive" src='@routes.Assets.versioned("images/pikachu.png")'></div>
+      <div class="col-md-6">
+        <table class="table">
+          <thead>
+            <th colspan="2" class="text-center">User info</th>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Displayed name:</th>
+              <td>@user.username</td>
+            </tr>
+            <tr>
+              <th scope="row">Email:</th>
+              <td>@user.email</td>
+            </tr>
+            @if(username.isDefined && user.username != username.get) {
+              <tr>
+                <th></th>
+                <td><friend-button username='"@username"' other-user='"@user.username"' csrf-token="@token.value"></friend-button></td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-
 }

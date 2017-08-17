@@ -9,12 +9,12 @@ angular
       username: '@',
       csrfToken: '@'
     },
-    controller: ['userFactory', 'friendFactory', 'STATUS_CODES',
-      function (userFactory, friendFactory, STATUS_CODES) {
+    controller: ['userFactory', 'webSocketFactory', 'STATUS_CODES',
+      function (userFactory, webSocketFactory, STATUS_CODES) {
         var vm = this;
 
         vm.angular = angular;
-        vm.Friend = friendFactory;
+        vm.Notification = webSocketFactory.Notification;
         vm.users = userFactory.users;
         vm.statusCodes = STATUS_CODES;
       }],

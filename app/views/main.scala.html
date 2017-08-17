@@ -17,7 +17,7 @@
     <div class="container">
         <div class="pull-right">
         @session.get(USERNAME_KEY).map { user =>
-        <span>@user</span> | <a href="/logout">logout</a>
+        <a href="@routes.UserDetailController.index(user).url">@user</a> | <a href="/logout">logout</a>
         }.getOrElse {
             <a href="/">log in</a> | <a href="/signup">sign up</a>
         }
