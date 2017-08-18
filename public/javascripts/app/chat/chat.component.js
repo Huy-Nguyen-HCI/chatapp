@@ -64,39 +64,38 @@
       vm.inputText = "";
     }
 
-    // ws.onMessage = function (msg) {
-    //   vm.chatMessages.push(JSON.parse(msg.data));
-    //   MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    // };
 
-    // /** posting math formula */
-    // vm.submitMath = function() {
-    //   var mathInput = vm.mathField.latex();
-    //
-    //   // if input is empty or only contains space, ignore
-    //   if (!isInputValid(mathInput)) return;
-    //
-    //   mathInput = "$$" + mathInput + "$$";
-    //   vm.chatMessages.push(mathInput);
-    //   vm.mathField.latex("");
-    // };
-    //
-    // /** handle file upload */
-    // vm.showPicker = function() {
-    //   vm.filePickerClient.pick({}).then(function (result) {
-    //     var files = result.filesUploaded;
-    //     for (var i = 0 ; i < files.length ; i++) {
-    //       vm.displayFile(files[i].url, files[i].filename);
-    //     }
-    //     vm.$digest();
-    //   });
-    // };
-    //
-    // vm.displayFile = function(link, fileName) {
-    //   console.log("hello");
-    //   var sendData = {fileName: fileName, link: link};
-    //   vm.chatMessages.push(sendData);
-    // };
+    /** posting math formula */
+    vm.submitMath = function() {
+      var mathInput = vm.mathField.latex();
+
+      // if input is empty or only contains space, ignore
+      if (!isInputValid(mathInput)) return;
+
+      mathInput = "$$" + mathInput + "$$";
+      var sendData = {sender: vm.username, text: mathInput};
+      vm.MessageData.addMessage(sendData);
+      vm.MessageData.send(sendData);
+      vm.mathField.latex("");
+    };
+
+
+    /** handle file upload */
+    vm.showPicker = function() {
+      vm.filePickerClient.pick({}).then(function (result) {
+        var files = result.filesUploaded;
+        for (var i = 0 ; i < files.length ; i++) {
+          vm.displayFile(files[i].url, files[i].filename);
+        }
+      });
+    };
+
+    vm.displayFile = function(link, fileName) {
+      var sendData = {fileName: fileName, link: link};
+      vm.MessageData.addMessage(sendData);
+      vm.MessageData.send(sendData);
+      $scope.$digest();
+    };
 
     /** check if a message is nonempty and does not contain only space **/
     function isInputValid(message) {

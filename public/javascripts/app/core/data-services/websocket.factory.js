@@ -21,6 +21,7 @@
     var ws = $websocket(getWebSocketUri("/socket"));
 
     ws.onMessage(function (msg) {
+      console.log(msg);
       var data = JSON.parse(msg.data);
       if (data.type === CHAT_MSG) {
         chatMessages.push(data);
