@@ -25,6 +25,7 @@ class CentralActor extends Actor {
       val json = Json.parse(text)
       val senderName = (json \ SENDER_KEY).as[String]
       val receiverName = (json \ RECEIVER_KEY).asOpt[String]
+      val roomName = (json \ ROOM_KEY).as[String]
 
       // If the receiver is in the message, then only send that message to him or her.
       // Otherwise, send to all the connected users.
@@ -43,8 +44,12 @@ object CentralActor {
   // constants that represent the keys in json message
   val SENDER_KEY = "sender"
   val RECEIVER_KEY = "receiver"
+  val ROOM_KEY = "room"
+  val CHAT_MSG = "chat-message"
+  val FRIEND_MSG = "friend-request"
 
   case class Join(name: String)
   case class Leave(name: String)
   case class ClientSentMessage(text: String)
+  case class ClientSentRequest(text: String)
 }
