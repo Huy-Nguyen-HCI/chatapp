@@ -11,11 +11,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FriendshipDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
-                        (implicit executionContext: ExecutionContext)
-  extends HasDatabaseConfigProvider[JdbcProfile] {
+                              (implicit ec: ExecutionContext)
+  extends UserComponents with HasDatabaseConfigProvider[JdbcProfile] {
+
   import driver.api._
 
   private val friendships = TableQuery[FriendshipTable]
+  private val users = TableQuery[UsersTable]
 
   // return the ids in ascending order. This ensures that
   // there is no duplicate pair of ids
@@ -62,15 +64,16 @@ class FriendshipDao @Inject() (protected val dbConfigProvider: DatabaseConfigPro
   }
 
 
-  /*
-   * User table
-   */
   private class FriendshipTable(tag: Tag) extends Table[Friendship](tag, "friendship") {
 
     def id1 = column[Long]("id1")
     def id2 = column[Long]("id2")
     def status = column[Int]("status")
     def actionId = column[Long]("action_id")
+
+    // foreign keys
+    def id1Fk = foreignKey("id1_fk", id1, users)(_.id, onDelete = ForeignKeyAction.Cascade)
+    def id2Fk = foreignKey("id2_fk", id2, users)(_.id, onDelete = ForeignKeyAction.Cascade)
 
     override def * = (id1, id2, status, actionId) <> ((Friendship.apply _).tupled, Friendship.unapply)
     def idx = index("friendship_index", (id1, id2), unique = true)

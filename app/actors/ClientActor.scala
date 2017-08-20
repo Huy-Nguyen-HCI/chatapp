@@ -5,17 +5,17 @@ import akka.actor.{Actor, ActorRef}
 /**
   * Created by thangle on 7/21/17.
   */
-class ClientActor(out: ActorRef, chat: ActorRef, name: String) extends Actor {
+class ClientActor(out: ActorRef, central: ActorRef, name: String) extends Actor {
 
   import CentralActor._
 
-  chat ! Join(name)
+  central ! Join(name)
 
-  override def postStop() = chat ! Leave(name)
+  override def postStop() = central ! Leave(name)
 
   def receive = {
     case text: String =>
-      chat ! ClientSentMessage(text)
+      central ! ClientSentMessage(text)
 
     case ClientSentMessage(text) =>
       out ! text

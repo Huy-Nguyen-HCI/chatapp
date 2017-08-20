@@ -1,4 +1,6 @@
 # --- !Ups
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE user (
   id INTEGER,
   username VARCHAR UNIQUE NOT NULL,

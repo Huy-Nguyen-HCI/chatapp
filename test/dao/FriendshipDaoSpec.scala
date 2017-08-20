@@ -1,5 +1,7 @@
 package dao
 
+import java.sql.SQLException
+
 import helpers.CachedInject
 import org.scalatest.BeforeAndAfter
 import org.scalatestplus.play.PlaySpec
@@ -7,7 +9,6 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.db.DBApi
 import play.api.db.evolutions.{Evolution, Evolutions, SimpleEvolutionsReader}
 import play.api.test.Helpers._
-
 import models.Friendship
 
 
@@ -23,7 +24,7 @@ class FriendshipDaoSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInj
     Evolutions.applyEvolutions(db)
     Evolutions.applyEvolutions(db, SimpleEvolutionsReader.forDefault(
       Evolution(
-        3,
+        4,
         "INSERT INTO user VALUES (1, 'ann', 'ann', 'ann@gmail.com');" +
         "INSERT INTO user VALUES (2, 'bob', 'bob', 'bob@gmail.com');" +
         "INSERT INTO user VALUES (3, 'charlie', 'charlie', 'charlie@gmail.com');"
@@ -80,6 +81,15 @@ class FriendshipDaoSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInj
 
       val res = await(friendshipDao.getFriendship(1, 2))
       res.isDefined mustBe false
+    }
+
+    "resolve foreign key correctly" in {
+      try {
+        await(friendshipDao.insertOrUpdateFriendship(1, 4, Friendship.PENDING))
+        fail()
+      } catch {
+        case _: SQLException =>
+      }
     }
   }
 }

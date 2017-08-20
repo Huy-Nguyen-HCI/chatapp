@@ -8,14 +8,14 @@ import models.User
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 /**
   * Created by thangle on 6/6/17.
   */
 @Singleton
 class UserDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
-                        (implicit executionContext: ExecutionContext)
-      extends HasDatabaseConfigProvider[JdbcProfile] {
+                        (implicit ec: ExecutionContext)
+  extends UserComponents with HasDatabaseConfigProvider[JdbcProfile] {
+
   import driver.api._
 
   private val users = TableQuery[UsersTable]
@@ -41,21 +41,4 @@ class UserDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
 
 
   def insert(user: User): Future[Unit] = db.run(users += user).map(_ => ())
-
-
-  /*
-   * User table
-   */
-  private class UsersTable(tag: Tag) extends Table[User](tag, "user") {
-
-    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def username = column[String]("username")
-    def password = column[String]("password")
-    def email = column[String]("email")
-
-    override def * = (id.?, username, password, email) <> (User.tupled, User.unapply)
-
-    def usernameIndex = index("username_constraint", username, unique = true)
-    def emailIndex = index("email_constraint", email, unique = true)
-  }
 }
