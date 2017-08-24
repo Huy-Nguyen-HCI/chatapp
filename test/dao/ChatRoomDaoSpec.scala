@@ -40,18 +40,18 @@ class ChatRoomDaoSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInjec
   "ChatRoomDao" should {
 
     "be able to insert a room with an owner id" in {
-      await(chatRoomDao.insert(1)) mustEqual 1
-      await(chatRoomDao.insert(2)) mustEqual 2
+      await(chatRoomDao.insertRoom(1)) mustEqual 1
+      await(chatRoomDao.insertRoom(2)) mustEqual 2
     }
 
     "be able to get the id of the owner of any room" in {
-      await(chatRoomDao.insert(1))
-      await(chatRoomDao.getOwnerId(1)) mustBe Some(1)
+      await(chatRoomDao.insertRoom(1))
+      await(chatRoomDao.getOwnerId(1)) mustEqual 1
     }
 
     "be able to handle foreign keys correctly" in {
       try {
-        await(chatRoomDao.insert(4))
+        await(chatRoomDao.insertRoom(4))
         fail()
       } catch {
         case _: SQLException =>
@@ -59,7 +59,7 @@ class ChatRoomDaoSpec extends PlaySpec with GuiceOneAppPerSuite with CachedInjec
     }
 
     "be able to add new participant to a given room" in {
-      val roomId = await(chatRoomDao.insert(1))
+      val roomId = await(chatRoomDao.insertRoom(1))
       await(chatRoomDao.addParticipant(roomId, 2))
       val res = await(chatRoomDao.getAllParticipantIds(roomId))
       res must contain only(1, 2)

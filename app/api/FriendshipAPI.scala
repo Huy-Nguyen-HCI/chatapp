@@ -123,22 +123,6 @@ class FriendshipAPI @Inject() (friendshipDao: FriendshipDao, userDao: UserDao)
     }
   }
 
-
-  case class SessionAuthenticated[A](username: String)(action: Action[A]) extends Action[A] {
-
-    def apply(request: Request[A]): Future[Result] = {
-      val connectedUser = request.session.get(USERNAME_KEY)
-
-      if (connectedUser.isDefined && username == connectedUser.get)
-        action(request)
-      else
-        Future.successful(Unauthorized(views.html.defaultpages.unauthorized()))
-    }
-
-    lazy val parser: BodyParser[A] = action.parser
-  }
-
-
   /*
    * Action composition that authenticates HTTP POST request.
    * The POST request must have a json body with sender and receiver values.
