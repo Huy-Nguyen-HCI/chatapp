@@ -11,8 +11,7 @@
   webSocketFactory.$inject = ['$websocket'];
 
   function webSocketFactory ($websocket) {
-
-    var chatMessages = [];
+    var chatMessages = {};
     var notifications = [];
 
     var CHAT_MSG = 'chat-message';
@@ -21,33 +20,43 @@
     var ws = $websocket(getWebSocketUri("/socket"));
 
     ws.onMessage(function (msg) {
+      console.log(msg);
       var data = JSON.parse(msg.data);
       if (data.type === CHAT_MSG) {
-        chatMessages.push(data);
+        addChatMessage(data.content, data.roomId);
       } else if (data.type === FRIEND_MSG) {
-        notifications.unshift(data);
+        notifications.unshift(data.content);
       }
     });
+
+    function addChatMessage (msg, roomId) {
+      var copyMsg = $.extend({}, msg);
+
+      if (!chatMessages.hasOwnProperty(roomId)) {
+        chatMessages[roomId] = [];
+      }
+      chatMessages[roomId].push(copyMsg);
+    }
+
+    function sendChatMessage (msg, roomId, receivers) {
+      var copyMsg = $.extend({}, msg);
+      var sendData = { type: CHAT_MSG, content: copyMsg, roomId: roomId, receivers: receivers };
+      ws.send(JSON.stringify(sendData));
+    }
 
     return {
       Chat: {
         chatMessages: chatMessages,
-        addMessage: function (msg) {
-          var newMsg = $.extend({}, msg);
-          newMsg.type = CHAT_MSG;
-          chatMessages.push(newMsg);
-        },
-        send: function (msg) {
-          msg.type = CHAT_MSG;
-          ws.send(JSON.stringify(msg));
-        }
+        addMessage: addChatMessage,
+        send: sendChatMessage
       },
 
       Notification: {
         notifications: notifications,
-        send: function (msg) {
-          msg.type = FRIEND_MSG;
-          ws.send(JSON.stringify(msg));
+        send: function (msg, receivers) {
+          var copyMsg = $.extend({}, msg);
+          var sendData = { type: FRIEND_MSG, content: copyMsg , receivers: receivers };
+          ws.send(JSON.stringify(sendData));
         }
       }
     };

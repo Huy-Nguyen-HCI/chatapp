@@ -6,30 +6,40 @@
     .component('chatWindow', {
       templateUrl: '/assets/javascripts/app/chat/chat.template.html',
       bindings: {
-        username: '@'
+        username: '@',
+        csrfToken: '@'
       },
       controller: ChatWindowController,
       controllerAs: 'chatCtrl'
     });
 
-  ChatWindowController.$inject = ['$scope', 'webSocketFactory', 'ChatModel'];
+  ChatWindowController.$inject = ['$scope', 'webSocketFactory', 'chatRoomFactory'];
 
-  function ChatWindowController($scope, webSocketFactory, ChatModel) {
+  function ChatWindowController($scope, webSocketFactory, chatRoomFactory) {
     var vm = this;
 
-    // list of chat rooms
-    vm.rooms = ChatModel.getRooms();
-    vm.currentRoom = vm.rooms[0];
-
     // chat message data communicated between the users
-    vm.MessageData = webSocketFactory.Chat;
     vm.inputText = "";
+    vm.Chat = webSocketFactory.Chat;
+
+    // list of chat rooms
+    vm.rooms = chatRoomFactory.listAccessibleRooms(function() {
+      vm.currentRoom = vm.rooms[0];
+      vm.messages = vm.Chat.chatMessages[vm.currentRoom];
+    });
 
     vm.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
 
     // scope methods
     vm.setCurrentRoom = setCurrentRoom;
+    vm.createRoom = createRoom;
+
     vm.submitMsg = submitMsg;
+    vm.submitMath = submitMath;
+
+    vm.showPicker = showPicker;
+    vm.displayFile = displayFile;
+
 
     // initialize MathJax
     angular.element(document).ready(function () {
@@ -40,16 +50,23 @@
       setupMathInput(vm.mathField);
     });
 
-    /** re-render the page whenever any model is updated **/
-    $scope.$watch(function(){
-      MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-      return true;
-    });
 
-    /** change current room, restart EventSource connection */
+    // /** re-render the page whenever any model is updated **/
+    // $scope.$watch(function(){
+    //   MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+    //   return true;
+    // });
+
+    /** change current room */
     function setCurrentRoom (room) {
       vm.currentRoom = room;
-      vm.MessageData.chatMessages = [];
+      vm.messages = vm.Chat.chatMessages[vm.currentRoom];
+    }
+
+    function createRoom() {
+      chatRoomFactory.save({ action: 'create', csrfToken: vm.csrfToken }, {}, function(data) {
+        vm.rooms.push(data.roomId);
+      });
     }
 
     /** posting chat text */
@@ -57,46 +74,50 @@
       var inputText = vm.inputText;
       if (!isInputValid(inputText)) return;
 
-      var sendData = {sender: vm.username, text: inputText};
-      vm.MessageData.addMessage(sendData);
-      vm.MessageData.send(sendData);
+      chatRoomFactory.listParticipants({ roomid: vm.currentRoom }, function(participants) {
+        // do not send the message back to the sender
+        var receivers = participants.filter(function(user) { return user !== vm.username });
+        var content = { sender: vm.username, text: inputText };
 
-      vm.inputText = "";
+        // add the message to the room's message list, then send it to all the other participants
+        vm.Chat.addMessage(content, vm.currentRoom);
+        vm.Chat.send(content, vm.currentRoom, receivers);
+
+        vm.inputText = "";
+      });
     }
 
-    // ws.onMessage = function (msg) {
-    //   vm.chatMessages.push(JSON.parse(msg.data));
-    //   MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    // };
+    /** posting math formula */
+    function submitMath() {
+      var mathInput = vm.mathField.latex();
 
-    // /** posting math formula */
-    // vm.submitMath = function() {
-    //   var mathInput = vm.mathField.latex();
-    //
-    //   // if input is empty or only contains space, ignore
-    //   if (!isInputValid(mathInput)) return;
-    //
-    //   mathInput = "$$" + mathInput + "$$";
-    //   vm.chatMessages.push(mathInput);
-    //   vm.mathField.latex("");
-    // };
-    //
-    // /** handle file upload */
-    // vm.showPicker = function() {
-    //   vm.filePickerClient.pick({}).then(function (result) {
-    //     var files = result.filesUploaded;
-    //     for (var i = 0 ; i < files.length ; i++) {
-    //       vm.displayFile(files[i].url, files[i].filename);
-    //     }
-    //     vm.$digest();
-    //   });
-    // };
-    //
-    // vm.displayFile = function(link, fileName) {
-    //   console.log("hello");
-    //   var sendData = {fileName: fileName, link: link};
-    //   vm.chatMessages.push(sendData);
-    // };
+      // if input is empty or only contains space, ignore
+      if (!isInputValid(mathInput)) return;
+
+      mathInput = "$$" + mathInput + "$$";
+      var sendData = {sender: vm.username, text: mathInput};
+      vm.Chat.addMessage(sendData, vm.currentRoom);
+      vm.Chat.send(sendData, vm.currentRoom);
+      vm.mathField.latex("");
+    }
+
+
+    /** handle file upload */
+    function showPicker () {
+      vm.filePickerClient.pick({}).then(function (result) {
+        var files = result.filesUploaded;
+        for (var i = 0 ; i < files.length ; i++) {
+          vm.displayFile(files[i].url, files[i].filename);
+        }
+      });
+    }
+
+    function displayFile (link, fileName) {
+      var sendData = {fileName: fileName, link: link};
+      vm.Chat.addMessage(sendData, vm.currentRoom);
+      vm.Chat.send(sendData, vm.currentRoom);
+      $scope.$digest();
+    }
 
     /** check if a message is nonempty and does not contain only space **/
     function isInputValid(message) {

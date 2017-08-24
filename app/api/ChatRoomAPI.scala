@@ -40,9 +40,22 @@ class ChatRoomAPI @Inject()(userDao: UserDao, chatRoomDao: ChatRoomDao)(implicit
   def createRoom = Action.async { request =>
     request.session.get(USERNAME_KEY) match {
       case Some(username) =>
-        userDao.findByUsername(username) flatMap {
+        userDao.findByUsername(username).flatMap {
           case Some(user) =>
             chatRoomDao.insertRoom(user.id.get).map(roomId => Ok(Json.obj("roomId" -> roomId)))
+          case None => Future.successful(BadRequest("This user does not exist"))
+        }
+      case None =>
+        Future.successful(Unauthorized(views.html.defaultpages.unauthorized()))
+    }
+  }
+
+
+  def listAccessibleRoomIds = Action.async { request =>
+    request.session.get(USERNAME_KEY) match {
+      case Some(username) =>
+        userDao.findByUsername(username).flatMap {
+          case Some(user) => chatRoomDao.getAccessibleRoomIds(user.id.get).map(res => Ok(Json.toJson(res)))
           case None => Future.successful(BadRequest("This user does not exist"))
         }
       case None =>

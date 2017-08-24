@@ -43,7 +43,7 @@ class ChatRoomAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAf
       val roomId = await(chatRoomDao.insertRoom(1))
       await(chatRoomDao.addParticipant(roomId, 2))
 
-      val request = FakeRequest(GET_REQUEST, s"/api/chatroom/$roomId/participants")
+      val request = FakeRequest(GET_REQUEST, s"/api/chatroom/participants?roomid=$roomId")
         .withHeaders(HOST -> "localhost")
         .withSession(USERNAME_KEY -> "ann")
 
@@ -57,7 +57,7 @@ class ChatRoomAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAf
       val roomId = await(chatRoomDao.insertRoom(1))
       await(chatRoomDao.addParticipant(roomId, 2))
 
-      val request = FakeRequest(GET_REQUEST, s"/api/chatroom/$roomId/participants")
+      val request = FakeRequest(GET_REQUEST, s"/api/chatroom/participants?roomid=$roomId")
         .withHeaders(HOST -> "localhost")
         .withSession(USERNAME_KEY -> "charlie")
 
@@ -67,7 +67,7 @@ class ChatRoomAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAf
     }
   }
 
-  "ChatRoomAPI#insertRoom" should {
+  "ChatRoomAPI#createRoom" should {
 
     "let the logged in user insert a new room" in {
       var request = FakeRequest(POST_REQUEST, "/api/chatroom/create")
@@ -85,6 +85,25 @@ class ChatRoomAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAf
       val roomId = (contentAsJson(result) \ "roomId").as[Long]
       await(chatRoomDao.getOwnerId(roomId)) mustEqual 1
       await(chatRoomDao.getAllParticipantIds(roomId)) must contain only 1
+    }
+  }
+
+  "ChatRoomAPI#listAccessibleRoomIds" should {
+
+    "let the logged in user get the list of his or her accessible rooms" in {
+      val roomId1 = await(chatRoomDao.insertRoom(1))
+      val roomId2 = await(chatRoomDao.insertRoom(2))
+      await(chatRoomDao.addParticipant(roomId2, 1))
+
+      val request = FakeRequest(GET_REQUEST, "/api/chatroom/list")
+        .withHeaders(HOST -> "localhost")
+        .withSession(USERNAME_KEY -> "ann")
+
+      val result = route(app, request).get
+
+      status(result) mustBe OK
+      val roomIdList = contentAsJson(result).as[Seq[Long]]
+      roomIdList must contain only (roomId1, roomId2)
     }
   }
 }

@@ -44,20 +44,20 @@ function init() {
     tex2jax: {inlineMath: [["$","$"]]}
   });
 
-  /* Set chatroom switching */
-  $('.chat-area[data-chat=room1]').addClass('active-chat');
-  $('.member-list li[data-chat=room1]').addClass('active');
-  $('.member-list li').mousedown(function(){
-    if ($(this).hasClass('.active')) {
-      return false;
-    } else {
-      var findChat = $(this).attr('data-chat');
-      $('.chat-area').removeClass('active-chat');
-      $('.member-list li').removeClass('active');
-      $(this).addClass('active');
-      $('.chat-area[data-chat = '+findChat+']').addClass('active-chat');
-    }
-  });
+  // /* Set chatroom switching */
+  // $('.chat-area[data-chat="room-1"]').addClass('active-chat');
+  // $('.member-list li[data-chat="room-1"]').addClass('active');
+  // $('.member-list li').mousedown(function(){
+  //   if ($(this).hasClass('.active')) {
+  //     return false;
+  //   } else {
+  //     var findChat = $(this).attr('data-chat');
+  //     $('.chat-area').removeClass('active-chat');
+  //     $('.member-list li').removeClass('active');
+  //     $(this).addClass('active');
+  //     $('.chat-area[data-chat = '+findChat+']').addClass('active-chat');
+  //   }
+  // });
 
 
 

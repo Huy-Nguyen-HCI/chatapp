@@ -56,7 +56,7 @@
   <script src='@routes.Assets.versioned("javascripts/app/chat/chat.module.js")'></script>
   <script src='@routes.Assets.versioned("javascripts/app/chat/chat.component.js")'></script>
   <script src='@routes.Assets.versioned("javascripts/app/chat/chat.directive.js")'></script>
-  <script src='@routes.Assets.versioned("javascripts/app/chat/chat.service.js")'></script>
+  <script src='@routes.Assets.versioned("javascripts/app/chat/chat.factory.js")'></script>
   <script src='@routes.Assets.versioned("javascripts/app/navbar/navbar.module.js")'></script>
   <script src='@routes.Assets.versioned("javascripts/app/navbar/navbar.component.js")'></script>
   <script src='@routes.Assets.versioned("javascripts/main.js")'></script>
@@ -72,7 +72,7 @@
           <nav-bar username="@username" csrf-token="@token.value"></nav-bar>
         </nav>
         <div class="chat-container">
-          <chat-window username="@username"></chat-window>
+          <chat-window username="@username" csrf-token="@token.value"></chat-window>
         </div>
       </div>
     </div>

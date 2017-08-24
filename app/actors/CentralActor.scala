@@ -1,6 +1,6 @@
 package actors
 
-import akka.actor.{Actor, ActorRef, ActorSystem}
+import akka.actor.{Actor, ActorRef}
 import play.api.libs.json.Json
 
 
@@ -23,26 +23,19 @@ class CentralActor extends Actor {
     case ClientSentMessage(text) =>
       // assume that text is in correct JSON format
       val json = Json.parse(text)
-      val senderName = (json \ SENDER_KEY).as[String]
-      val receiverName = (json \ RECEIVER_KEY).asOpt[String]
+      val receivers = (json \ RECEIVER_KEY).as[List[String]]
 
-      // If the receiver is in the message, then only send that message to him or her.
-      // Otherwise, send to all the connected users.
-      receiverName match {
-        case Some(username) =>
-          if (subscribers.contains(username))
-            subscribers(username) ! ClientSentMessage(text)
-
-        case None =>
-          for ((_, ref) <- subscribers - senderName) ref ! ClientSentMessage(text)
+      for (r <- receivers) {
+        if (subscribers contains r) {
+          subscribers(r) ! ClientSentMessage(text)
+        }
       }
   }
 }
 
 object CentralActor {
   // constants that represent the keys in json message
-  val SENDER_KEY = "sender"
-  val RECEIVER_KEY = "receiver"
+  val RECEIVER_KEY = "receivers"
 
   case class Join(name: String)
   case class Leave(name: String)

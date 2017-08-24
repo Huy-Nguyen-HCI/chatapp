@@ -41,8 +41,8 @@
       var promise = friendFactory.sendRequest(action, vm.username, vm.otherUser, vm.csrfToken);
       promise.then(function() {
         if (action !== 'remove') {
-          var json = { sender: vm.username, receiver: vm.otherUser , status:  actionToStatus[action] };
-          webSocketFactory.Notification.send(json);
+          var json = { sender: vm.username, status:  actionToStatus[action] };
+          webSocketFactory.Notification.send(json, [vm.otherUser]);
         }
         vm.relationship = friendFactory.checkStatus(vm.username, vm.otherUser);
       }, function(error) {

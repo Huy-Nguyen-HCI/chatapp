@@ -13,8 +13,11 @@ class ChatRoomRouter @Inject()(controller: ChatRoomAPI) extends SimpleRouter {
   val prefix = "/api/chatroom"
 
   override def routes: Routes = {
-    case GET(p"/${long(roomId)}/participants") =>
+    case GET(p"/participants" ? q"roomid=${long(roomId)}") =>
       controller.listParticipants(roomId)
+
+    case GET(p"/list") =>
+      controller.listAccessibleRoomIds
 
     case POST(p"/create") =>
       controller.createRoom

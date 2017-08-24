@@ -48,5 +48,18 @@ class ChatRoomDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
       participantIds <- participantsQuery
     } yield ownerId +: participantIds
   }
+
+
+  /** Returns the ids of all rooms that are accessible to the user with this id. */
+  def getAccessibleRoomIds(userId: Long): Future[Seq[Long]] = {
+    // all the rooms owned by this user
+    val ownedRoomIdsQuery = db.run(chatRooms.filter(_.ownerId === userId).map(_.id).result)
+    val accessibleRoomIdsQuery = db.run(chatRoomsParticipants.filter(_.userId === userId).map(_.roomId).result)
+
+    for {
+      ownedRoomIds <- ownedRoomIdsQuery
+      accessibleRoomIds <- accessibleRoomIdsQuery
+    } yield ownedRoomIds ++ accessibleRoomIds
+  }
 }
 
