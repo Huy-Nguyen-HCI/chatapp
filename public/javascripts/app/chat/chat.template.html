@@ -2,7 +2,8 @@
     <div class="row">
         <div id="custom-search-input">
             <div class="input-group col-md-12">
-                <input type="text" class="search-query form-control" placeholder="Search conversation"/>
+                <input type="text" class="search-query form-control" ng-model="conversationSearchText"
+                       placeholder="Search conversation"/>
                 <button class="btn btn-danger" type="button">
                     <span class="glyphicon glyphicon-search"></span>
                 </button>
@@ -12,25 +13,16 @@
             <button class="dropdown-toggle" type="button" id="dropdownMenu2"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fa fa-weixin" aria-hidden="true"></i>
-                All Conversations
+                Tools
                 <span class="caret pull-right"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                <li><a href="#"> All Conversation </a>  <ul class="sub-menu list-unstyled">
-                    <li><a href="#"> All Conversation </a> </li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li><a href="#">Separated link</a></li>
-                </ul>
-                </li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li><a href="#">Separated link</a></li>
+                <li><a href="#" ng-click="chatCtrl.createRoom()"> Add conversation </a></li>
             </ul>
         </div>
         <div class="member-list">
             <ul class="list-unstyled">
-                <li class="left clearfix" ng-repeat="r in chatCtrl.rooms"
+                <li class="left clearfix" ng-repeat="r in chatCtrl.rooms | filter:conversationSearchText"
                     ng-class="{active: r === chatCtrl.currentRoom }" ng-click="chatCtrl.setCurrentRoom(r)">
                         <span class="chat-img pull-left">
                             <img src="/assets/images/conversation.jpeg"
@@ -38,13 +30,13 @@
                         </span>
                     <div class="chat-body clearfix">
                         <div class="header_sec">
-                            <strong class="primary-font">Pucca</strong> <strong class="pull-right ">
-                            09:45AM</strong>
+                            <strong class="primary-font">{{ r }}</strong>
+                            <!--<strong class="pull-right ">09:45AM</strong>-->
                         </div>
-                        <div class="contact_sec">
-                            <strong class="primary-font">(123) 123-456</strong>
-                            <span class="badge pull-right">3</span>
-                        </div>
+                        <!--<div class="contact_sec">-->
+                            <!--<strong class="primary-font">(123) 123-456</strong>-->
+                            <!--<span class="badge pull-right">3</span>-->
+                        <!--</div>-->
                     </div>
                 </li>
             </ul>
@@ -56,21 +48,12 @@
     <div class="row">
         <div class="new-message-head">
             <div class="pull-left" id="new-conversation">
-                <button ng-click="chatCtrl.createRoom()"><i class="fa fa-plus-square-o" aria-hidden="true"></i>
-                    New Conversation
-                </button>
+                <p class="text-center">Room {{ chatCtrl.currentRoom }}</p>
             </div>
             <div class="pull-right">
-                <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-cogs" aria-hidden="true"></i> Setting
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                        <li><a href="/logout">Log out</a></li>
-                    </ul>
-                </div>
+                <input type="text" ng-model="chatCtrl.selectedParticipant"
+                       uib-typeahead="user for user in chatCtrl.getUserList()"
+                       typeahead-loading="loadingUsers" typeahead-no-results="noResults" />
             </div>
         </div>
         <div class="chat-area" ng-repeat="r in chatCtrl.rooms" ng-class="{'active-chat': r === chatCtrl.currentRoom}">
@@ -82,9 +65,11 @@
                     </span>
                     <div class="chat-body1 clearfix">
                         <p ng-if="msg.link">
+                            <strong>{{ msg.sender }}: </strong>
                             <a href="{{msg.link}}">{{msg.fileName}}</a>
                         </p>
-                        <p ng-if="msg.text" data-ng-bind-html="::msg.text | embed">
+                        <p ng-if="msg.text">
+                            <strong>{{ msg.sender }}: </strong>
                             {{msg.text}}
                         </p>          
                         <div class="chat-time pull-right">09:40PM</div>
@@ -114,5 +99,6 @@
         </div>
     </div>
 </div>
+
 
 <setup-chat></setup-chat>

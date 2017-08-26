@@ -41,7 +41,7 @@
             <input
                 type="text" ng-model="navBarCtrl.selectedUser" placeholder="Search username"
                 class="form-control search-query" typeahead-template-url="userDisplay.html"
-                uib-typeahead="user for user in navBarCtrl.users.values() | startWith:$viewValue:navBarCtrl.username | limitTo:8">
+                uib-typeahead="user for user in navBarCtrl.getUserList()">
         </div>
     </form>
     <ul class="nav navbar-nav navbar-right">

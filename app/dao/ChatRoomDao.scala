@@ -12,10 +12,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ChatRoomDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
                             (implicit ec: ExecutionContext)
-  extends ChatRoomParticipantComponents with HasDatabaseConfigProvider[JdbcProfile] {
+  extends UserComponents with HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
+
+  private val users = TableQuery[UsersTable]
+  private val chatRooms = TableQuery[ChatRoomsTable]
   /**
     * The chat-room-participant table does not include row (roomId, userId) such
     * that the user is the owner of the room.
@@ -60,6 +63,32 @@ class ChatRoomDao @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
       ownedRoomIds <- ownedRoomIdsQuery
       accessibleRoomIds <- accessibleRoomIdsQuery
     } yield ownedRoomIds ++ accessibleRoomIds
+  }
+
+
+  class ChatRoomsTable(tag: Tag) extends Table[ChatRoom](tag, "chat_room") {
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def ownerId = column[Long]("owner_id")
+
+    // foreign key
+    def ownerIdFk = foreignKey("owner_id_fk", id, users)(_.id, onDelete = ForeignKeyAction.Cascade)
+
+    override def * = (id.?, ownerId) <> (ChatRoom.tupled, ChatRoom.unapply)
+  }
+
+  class ChatRoomsParticipantsTable(tag: Tag)
+    extends Table[ChatRoomParticipant](tag, "chat_room_participant") {
+
+    // fields
+    def roomId = column[Long]("room_id")
+    def userId = column[Long]("user_id")
+
+    // foreign keys
+    def roomIdFk = foreignKey("room_id_fk", roomId, chatRooms)(_.id, onDelete = ForeignKeyAction.Cascade)
+    def userIdFk = foreignKey("owner_id_fk", userId, users)(_.id, onDelete = ForeignKeyAction.Cascade)
+
+
+    override def * = (roomId, userId) <> ((ChatRoomParticipant.apply _).tupled, ChatRoomParticipant.unapply)
   }
 }
 

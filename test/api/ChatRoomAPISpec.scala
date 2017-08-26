@@ -43,7 +43,7 @@ class ChatRoomAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAf
       val roomId = await(chatRoomDao.insertRoom(1))
       await(chatRoomDao.addParticipant(roomId, 2))
 
-      val request = FakeRequest(GET_REQUEST, s"/api/chatroom/participants?roomid=$roomId")
+      val request = FakeRequest(GET_REQUEST, s"/api/chatroom/participants?room=$roomId")
         .withHeaders(HOST -> "localhost")
         .withSession(USERNAME_KEY -> "ann")
 
@@ -57,13 +57,34 @@ class ChatRoomAPISpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAf
       val roomId = await(chatRoomDao.insertRoom(1))
       await(chatRoomDao.addParticipant(roomId, 2))
 
-      val request = FakeRequest(GET_REQUEST, s"/api/chatroom/participants?roomid=$roomId")
+      val request = FakeRequest(GET_REQUEST, s"/api/chatroom/participants?room=$roomId")
         .withHeaders(HOST -> "localhost")
         .withSession(USERNAME_KEY -> "charlie")
 
       val result = route(app, request).get
 
       status(result) mustBe FORBIDDEN
+    }
+  }
+
+  "ChatRoomAPI#addParticipant" should {
+
+    "let the owner add new participant to his or her room" in {
+      val roomId = await(chatRoomDao.insertRoom(1))
+
+      var request = FakeRequest(POST_REQUEST, s"/api/chatroom/add?room=$roomId&username=bob")
+        .withHeaders(HOST -> "localhost")
+        .withSession(USERNAME_KEY -> "ann")
+
+      request = addPostToken(request)
+
+      val result = route(app, request).get
+
+      status(result) mustBe OK
+
+      // check in database
+      val participantList = await(chatRoomDao.getAllParticipantIds(roomId))
+      participantList must contain only (1, 2)
     }
   }
 

@@ -8,23 +8,17 @@
     .module('core')
     .factory('userFactory', userFactory);
 
+  userFactory.$inject = ['$http'];
 
-  function userFactory($resource) {
-    var User = $resource('/api/users/:name', null, {
-      query: {
-        method: 'GET',
-        isArray: false,
-        transformResponse: function (data) {
-          var dataArray = JSON.parse(data);
-          return new HashSet(dataArray);
-        }
-      }
-    });
+  function userFactory($http) {
 
-    var users = User.query();
+    /** List all users. */
+    function list() {
+      return $http.get('/api/users');
+    }
 
     return {
-      users: users
+      list: list
     }
   }
 })();
