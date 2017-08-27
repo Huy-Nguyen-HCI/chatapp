@@ -73,12 +73,8 @@
     }
 
     function addParticipant (participantName) {
-      chatRoomFactory.save(
-        { action: 'add', csrfToken: vm.csrfToken, room: vm.currentRoom, username: participantName}, {},
-        function(data) {
-
-        }
-      );
+      chatRoomFactory.save({ action: 'add', room: vm.currentRoom, username: participantName,
+          csrfToken: vm.csrfToken }, {});
     }
 
     function getUserList () {
