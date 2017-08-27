@@ -45,7 +45,15 @@
 </div>
 
 <div class="col-sm-9 message-section">
-    <div class="row">
+    <div class="row" ng-if="chatCtrl.angular.isUndefined(chatCtrl.currentRoom)">
+        <h2 class="text-center" ng-if="chatCtrl.rooms.length === 0">
+            Add a chat room on the left (Tools -> Add conversation).
+        </h2>
+        <h2 class="text-center" ng-if="chatCtrl.rooms.length > 0">
+            Choose a chat room on the left.
+        </h2>
+    </div>
+    <div class="row" ng-if="!chatCtrl.angular.isUndefined(chatCtrl.currentRoom)">
         <div class="new-message-head">
             <div class="pull-left" id="new-conversation">
                 <p class="text-center">Room {{ chatCtrl.currentRoom }}</p>

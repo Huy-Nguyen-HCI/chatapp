@@ -17,6 +17,7 @@
 
   function ChatWindowController($scope, webSocketFactory, chatRoomFactory, userFactory) {
     var vm = this;
+    vm.angular = angular;
 
     vm.addParticipantBtnClicked = false;
     vm.selectedParticipant = "";
