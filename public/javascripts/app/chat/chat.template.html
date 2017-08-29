@@ -91,11 +91,11 @@
             <!--<div class="checkbox pull-left">-->
                 <!--<label><input type="checkbox" id="typeMath">Type math</label>-->
             <!--</div>-->
-            <!--<form enctype="multipart/form-data">-->
-                <!--<button class="pull-right btn btn-primary" type="file" ng-click="chatCtrl.showPicker()">-->
-                    <!--<i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files-->
-                <!--</button>-->
-            <!--</form>-->
+            <form enctype="multipart/form-data">
+                <button class="pull-right btn btn-primary" type="file" ng-click="chatCtrl.showPicker()">
+                    <i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files
+                </button>
+            </form>
             <div id="input-area">
                 <form ng-submit="chatCtrl.submitMsg()">
                     <input type="text" name="chat" ng-model="chatCtrl.inputText"

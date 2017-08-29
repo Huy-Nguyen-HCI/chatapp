@@ -13,13 +13,13 @@
       controllerAs: 'chatCtrl'
     });
 
-  ChatWindowController.$inject = ['$scope', 'webSocketFactory', 'chatRoomFactory', 'userFactory'];
+  ChatWindowController.$inject = ['webSocketFactory', 'chatRoomFactory', 'userFactory'];
 
-  function ChatWindowController($scope, webSocketFactory, chatRoomFactory, userFactory) {
+  function ChatWindowController(webSocketFactory, chatRoomFactory, userFactory) {
     var vm = this;
     vm.angular = angular;
+    vm.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
 
-    vm.addParticipantBtnClicked = false;
     vm.selectedParticipant = "";
 
     // chat message data communicated between the users
@@ -30,8 +30,6 @@
     vm.rooms = chatRoomFactory.listAccessibleRooms(function() {
       vm.currentRoom = vm.rooms[0];
     });
-
-    vm.filePickerClient = filestack.init('AqRfNWvWJTgcoBKncr9gCz');
 
     // scope methods
     vm.setCurrentRoom = setCurrentRoom;
@@ -90,23 +88,46 @@
       });
     }
 
-    /** posting chat text */
-    function submitMsg () {
-      var inputText = vm.inputText;
-      if (!isInputValid(inputText)) return;
 
+    /** Send the message to all participants in the current room. */
+    function sendMsgToAllParticipants (msg) {
       chatRoomFactory.listParticipants({ room: vm.currentRoom }, function(participants) {
         // do not send the message back to the sender
         var receivers = participants.filter(function(user) { return user !== vm.username });
-        var content = { sender: vm.username, text: inputText };
 
         // add the message to the room's message list, then send it to all the other participants
-        vm.Chat.addMessage(content, vm.currentRoom);
-        vm.Chat.send(content, vm.currentRoom, receivers);
-
-        vm.inputText = "";
+        vm.Chat.addMessage(msg, vm.currentRoom);
+        vm.Chat.send(msg, vm.currentRoom, receivers);
       });
     }
+
+
+    /** posting chat text */
+    function submitMsg () {
+      if (isInputValid(vm.inputText)) {
+        var msg = { sender: vm.username, text: vm.inputText };
+        sendMsgToAllParticipants(msg);
+      }
+      vm.inputText = "";
+    }
+
+
+    /** handle file upload */
+    function showPicker () {
+      vm.filePickerClient.pick({}).then(function (result) {
+        var files = result.filesUploaded;
+        for (var i = 0 ; i < files.length ; i++) {
+          vm.displayFile(files[i].url, files[i].filename);
+        }
+      });
+    }
+
+    /** Display file in chat message. */
+    function displayFile (link, fileName) {
+      var msg = { sender: vm.username, fileName: fileName, link: link };
+      sendMsgToAllParticipants(msg);
+    }
+
 
     /** posting math formula */
     function submitMath() {
@@ -122,23 +143,6 @@
       vm.mathField.latex("");
     }
 
-
-    /** handle file upload */
-    function showPicker () {
-      vm.filePickerClient.pick({}).then(function (result) {
-        var files = result.filesUploaded;
-        for (var i = 0 ; i < files.length ; i++) {
-          vm.displayFile(files[i].url, files[i].filename);
-        }
-      });
-    }
-
-    function displayFile (link, fileName) {
-      var sendData = {fileName: fileName, link: link};
-      vm.Chat.addMessage(sendData, vm.currentRoom);
-      vm.Chat.send(sendData, vm.currentRoom);
-      $scope.$digest();
-    }
 
     /** check if a message is nonempty and does not contain only space **/
     function isInputValid(message) {
