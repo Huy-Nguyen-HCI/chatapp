@@ -88,23 +88,23 @@
             </ul>
         </div>
         <div class="message-write">
-            <div class="checkbox pull-left">
-                <label><input type="checkbox" id="typeMath">Type math</label>
-            </div>
-            <form enctype="multipart/form-data">
-                <button class="pull-right btn btn-primary" type="file" ng-click="chatCtrl.showPicker()">
-                    <i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files
-                </button>
-            </form>
+            <!--<div class="checkbox pull-left">-->
+                <!--<label><input type="checkbox" id="typeMath">Type math</label>-->
+            <!--</div>-->
+            <!--<form enctype="multipart/form-data">-->
+                <!--<button class="pull-right btn btn-primary" type="file" ng-click="chatCtrl.showPicker()">-->
+                    <!--<i class="fa fa-cloud-upload" aria-hidden="true"></i> Add Files-->
+                <!--</button>-->
+            <!--</form>-->
             <div id="input-area">
                 <form ng-submit="chatCtrl.submitMsg()">
                     <input type="text" name="chat" ng-model="chatCtrl.inputText"
                            class="form-control ng-pristine ng-valid input-block-level"
                            placeholder="Type a message" id="input-box">
                 </form>
-                <div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">
-                </div>
-                <button id="mathquill-submit" ng-click="chatCtrl.submitMath()"></button>
+                <!--<div id="mathquill" class="input-field ng-pristine ng-valid input-block-level">-->
+                <!--</div>-->
+                <!--<button id="mathquill-submit" ng-click="chatCtrl.submitMath()"></button>-->
             </div>
         </div>
     </div>
