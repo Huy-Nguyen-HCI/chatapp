@@ -13,9 +13,12 @@
   function webSocketFactory ($websocket) {
     var CHAT_MSG = 'chat-message';
     var FRIEND_MSG = 'friend-request';
+    var WS_TIMEOUT = 20000;
 
     // open web socket connection.
     var ws = $websocket(getWebSocketUri("/socket"));
+    // this id is used to keep track of timeout function
+    var timerId = 0;
 
     /** Service for sending chat messages. */
     var Chat = {
@@ -61,6 +64,32 @@
         Notification.addNotification(data.content);
       }
     });
+
+
+    ws.onOpen(function() {
+      keepAlive();
+    });
+
+
+    ws.onClose(function() {
+      cancelKeepAlive();
+    });
+
+
+    /** Send ping frame to the server to keep the websocket alive. */
+    function keepAlive() {
+      ws.send(JSON.stringify({ type: 'ping' }));
+      timerId = setTimeout(keepAlive, WS_TIMEOUT);
+    }
+
+
+    /** Stop sending ping frame to the server. */
+    function cancelKeepAlive() {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    }
+
 
     return {
       Chat: Chat,
